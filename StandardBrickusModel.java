@@ -1,7 +1,6 @@
 /**
  * Kyle Wong
- * 13.9.13
- * OOSE HW1a
+ * 13.9.21
  * kwong23@jhu.edu
  */
 package kyle.brickus;

@@ -1,4 +1,4 @@
-package kyle.brickus;
+package edu.jhu.cs.oose.fall2013.brickus.iface;
 
 /**
  * This enumeration represents the players in a game of Brickus.

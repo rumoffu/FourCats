@@ -34,8 +34,6 @@ public class MyBrickusFrame extends JFrame {
 		
 	}
 	
-	
-	
 	public void go() {
 		
 		frame = new JFrame();
@@ -56,7 +54,7 @@ public class MyBrickusFrame extends JFrame {
 		
 		MyBrickusTray tray = new MyBrickusTray(model); // lower panel of pieces and pass button
 		constraints.gridx = 0;
-		constraints.gridy = 31;
+		constraints.gridy = 30;
 		constraints.gridwidth = 1;
 		constraints.gridheight = 9;
 		constraints.weightx = 1;
@@ -120,7 +118,6 @@ class MyBrickusBoard extends JComponent {
         for (Rectangle cell : cells) {
             g2D.draw(cell);
         }
-        //g2D.dispose();
 	}
 }
 
@@ -248,9 +245,6 @@ class pieceTray extends JPanel {
 		
 		for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
 			
-			//JPanel holdPiece = new JPanel();
-			//holdPiece.setBorder(BorderFactory.createLineBorder(Color.black));
-			//this.add(holdPiece);
 			SinglePiece newPiece = new SinglePiece(model, piece);
 			this.add(newPiece);
 		}
@@ -267,15 +261,12 @@ class MyBrickusTray extends JPanel {
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.fill = GridBagConstraints.BOTH;
 		
-		//JPanel holdPieceTray = new JPanel();
-		//holdPieceTray.setBorder(BorderFactory.createLineBorder(Color.black));
 		pieceTray pieceTray = new pieceTray(model);
 		pieceTray.setBorder(BorderFactory.createLineBorder(Color.black));
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.gridwidth = 7;
 		constraints.weightx = 1;
-		//this.add(holdPieceTray, constraints);
 		this.add(pieceTray, constraints);
 		
 		JButton passButton = new JButton("Pass");
@@ -294,7 +285,6 @@ class MyBrickusTracker extends JPanel {
 	
 	public MyBrickusTracker(BrickusModel model) {
 		
-		//REVIVE: make BrickusListener class
 		model.addBrickusListener(new ErrorHandler());
 		
 		this.setLayout(new GridBagLayout());
@@ -313,11 +303,8 @@ class MyBrickusTracker extends JPanel {
 		errorText.setText(errorText.getText() + "<font color=000000>Cats! =^.^=");
 		
 		JLabel player1Score = new JLabel("<html><font color=0000CC>Score: 0 </font>");
-		
 		JLabel player2Score = new JLabel("<html><font color = CC0000>Score: 0 </font>");
-		
 		JLabel player3Score = new JLabel("<html><font color = 006600>Score: 0 </font>");
-		
 		JLabel player4Score = new JLabel("<html><font color = FF0066>Score: 0 </font>");
 		
 		subpanelLeft.add(errorText);

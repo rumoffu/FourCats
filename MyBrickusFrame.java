@@ -74,9 +74,12 @@ class singlePiece extends JPanel {
 	public singlePiece(BrickusModel model, BrickusPiece piece) {
 		
 		this.setLayout(new GridLayout(5, 5));
+		this.setBackground(Color.white);
 		
 		int heightBuffer = calculateBuffer(piece.getHeight());
 		int widthBuffer = calculateBuffer(piece.getWidth());
+		System.out.print(piece.getHeight() + " " + heightBuffer + " ");
+		System.out.println(piece.getWidth() + " " + widthBuffer + " ");
 		
 		Player activePlayer = model.getActivePlayer();
 		Color playerColor;
@@ -87,33 +90,39 @@ class singlePiece extends JPanel {
 			playerColor = Color.red;
 		} //REVIVE: put in all 4 Players
 		
-		for(int i=0; i<5; i++) { // columns of the piece
+		for(int h=0; h<5; h++) {
 			
-			if(i<widthBuffer) {
-				JPanel brick = new JPanel();
-				brick.setBackground(Color.RED);
-				brick.setBorder(BorderFactory.createLineBorder(Color.black));
-				this.add(brick);
-			}
-			
-			else {
-				for(int j=0; j<5; j++) { // rows of the piece
+			if(h<heightBuffer) {
 				
-					if(j<heightBuffer) {
+				for(int i=0; i<5; i++) {
+					
+					JPanel brick = new JPanel();
+					brick.setBackground(Color.white);
+					//brick.setBorder(BorderFactory.createLineBorder(Color.black));
+					this.add(brick);
+				}
+			}
+			else {
+				
+				for(int w=0; w<5; w++) {
+					
+					if(w<widthBuffer) {
+						
 						JPanel brick = new JPanel();
-						brick.setBackground(Color.GREEN);
-						brick.setBorder(BorderFactory.createLineBorder(Color.black));
+						brick.setBackground(Color.white);
+						//brick.setBorder(BorderFactory.createLineBorder(Color.black));
 						this.add(brick);
 					}
 					else {
+						
 						JPanel brick = new JPanel();
-						if(piece.isOccupied(i-widthBuffer, j-heightBuffer)) {
-							brick.setBackground(playerColor);
-							brick.setBorder(BorderFactory.createLineBorder(Color.black));
+						if(piece.isOccupied(w-widthBuffer, h-heightBuffer)) {
+						brick.setBackground(playerColor);
+						brick.setBorder(BorderFactory.createLineBorder(Color.black));
 						}
 						else {
-							brick.setBackground(Color.white);
-							brick.setBorder(BorderFactory.createLineBorder(Color.black));
+						brick.setBackground(Color.white);
+						//brick.setBorder(BorderFactory.createLineBorder(Color.black));
 						}
 						this.add(brick);
 					}

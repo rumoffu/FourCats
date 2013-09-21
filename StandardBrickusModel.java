@@ -12,11 +12,12 @@ import java.util.List;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusEvent;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusIllegalMoveEvent;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusListener;
+import edu.jhu.cs.oose.fall2013.brickus.iface.Player;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusModel;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusPiece;
-import edu.jhu.cs.oose.fall2013.brickus.iface.Player;
+//import edu.jhu.cs.oose.fall2013.brickus.iface.Player;
 import kyle.brickus.StandardBrickusPiece;
-
+//import kyle.brickus.BrickusModel;
 /**
  * Class for managing the Brickus Model which controls the game logic.
  */
@@ -40,8 +41,8 @@ public class StandardBrickusModel implements BrickusModel {
 	private java.util.List<Player> players = new java.util.ArrayList<Player>();
 	Player PLAYER1 = Player.PLAYER1;
 	Player PLAYER2 = Player.PLAYER2;
-	Player PLAYER3;
-	Player PLAYER4;
+	Player PLAYER3 = Player.PLAYER3;
+	Player PLAYER4 = Player.PLAYER4;
 	/*
 	public enum Player {
 		PLAYER1, PLAYER2, PLAYER3, PLAYER4;
@@ -215,24 +216,7 @@ public class StandardBrickusModel implements BrickusModel {
 	 */
 	public int calculateScore(Player player){
 		int score = 0;
-		int playerNum = 0;
-		System.out.println(player.toString());
-		///System.out.println(Player.valueOf(player.toString()));
-		///System.out.println(Player.values());
-		
-		if(player == PLAYER1)
-			playerNum = 1;
-		else if(player == PLAYER2)
-			playerNum = 2;
-		else if(player == PLAYER3)
-			playerNum = 3;
-		else if(player == PLAYER4)
-			playerNum = 4;
-		else
-		{
-			playerNum = 0;
-			System.out.println("Error - Could not find player to calculate score.");
-		}
+		int playerNum = getPlayerNum(player);
 		
 		for(int y = 0; y < boardHeight; y++)
 		{
@@ -255,12 +239,16 @@ public class StandardBrickusModel implements BrickusModel {
 			player = PLAYER1;
 		else if (activePlayer == 2)
 			player = PLAYER2;
+		else if (activePlayer == 3)
+			player = PLAYER3;
+		else if (activePlayer == 4)
+			player = PLAYER4;
 		else
 		{
 			player = null;
 			System.out.println("Error - Could not find active player.");
 		}
-		return  player;
+		return player;
 	}
 	
 	/** 
@@ -275,6 +263,10 @@ public class StandardBrickusModel implements BrickusModel {
 			player = PLAYER1;
 		else if(board[y][x] == 2)
 			player = PLAYER2;
+		else if(board[y][x] == 3)
+			player = PLAYER3;
+		else if(board[y][x] == 4)
+			player = PLAYER4;
 		else //unoccupied
 			player = null;
 		return player;
@@ -299,6 +291,10 @@ public class StandardBrickusModel implements BrickusModel {
 			theList = player1pieces;
 		else if(player == PLAYER2)
 			theList = player2pieces;
+		else if(player == PLAYER3)
+			theList = player3pieces;
+		else if(player == PLAYER4)
+			theList = player4pieces;
 		else
 		{
 			theList = null;
@@ -320,31 +316,42 @@ public class StandardBrickusModel implements BrickusModel {
 	 * @param player the Player who has passed his or her turn
 	 */
 	public void pass(Player player) {
-		if(player == PLAYER1)
-			activePlayer = 2;
-		else if(player == PLAYER2)
+		BrickusEvent update;
+		
+		activePlayer = (activePlayer + 1) % (numPlayers + 1);
+		if(activePlayer == 0){ //reset to first player
 			activePlayer = 1;
-		else
-		{
-			activePlayer = 0;
-			System.out.println("Error - Could not find player who passed.");
 		}
 		numPasses++;
-		if(numPasses == 2)
-		{
-			BrickusEvent update = new BrickusEvent(StandardBrickusModel.myModel, true, true); //game ended is false
-			for(BrickusListener listener: StandardBrickusModel.myModel.listeners){
-				listener.modelChanged(update);
-			}
+		if(numPasses == numPlayers){
+			update = new BrickusEvent(StandardBrickusModel.myModel, true, true); //game ended is true
 		}
-		else
-		{
-			BrickusEvent update = new BrickusEvent(StandardBrickusModel.myModel, true, false); //game ended is false
-			for(BrickusListener listener: StandardBrickusModel.myModel.listeners){
-				listener.modelChanged(update);
-			}
+		else{
+			update = new BrickusEvent(StandardBrickusModel.myModel, true, false); //game ended is false
+		}
+		for(BrickusListener listener: StandardBrickusModel.myModel.listeners){
+			listener.modelChanged(update);
 		}
 	}
+	
+	/**
+	 * returns the Player's number
+	 * @param player the player whose number is to be returned
+	 * @return the Player's number
+	 */
+	public int getPlayerNum(Player player){
+		if(player == PLAYER1)
+			return 1;
+		else if(player == PLAYER2)
+			return 2;
+		else if(player == PLAYER3)
+			return 3;
+		else if(player == PLAYER4)
+			return 4;
+		else
+			return 0;
+	}
+	
 	/** 
 	 * Indicates that the active player is attempting to place the provided piece.
 	 * @param player the Player who is placing the piece
@@ -361,16 +368,8 @@ public class StandardBrickusModel implements BrickusModel {
 		
 		String testMessage;
 		//find player number
-		int playerNum;
-		if(player == PLAYER1)
-			playerNum = 1;
-		else if(player == PLAYER2)
-			playerNum = 2;
-		else
-		{
-			playerNum = 0;
-			System.out.println("Error - Could not find player for placing piece");
-		}
+		int playerNum = getPlayerNum(player);
+		
 		//verify the spot is clear
 		testMessage = isClear(playerNum, x, y, piece);
 		if(testMessage.equals("true"))

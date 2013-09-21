@@ -363,10 +363,13 @@ public class StandardBrickusModel implements BrickusModel {
 
 		boolean validDiagonal = false;
 		boolean validStart = false;
-		boolean started = false;
 		boolean playerChanged = false;
-		
+		boolean topFilled = false;
+		boolean botFilled = false;
+		boolean topDiagonal = false;
+		boolean botDiagonal = false;
 		String testMessage;
+		
 		//find player number
 		int playerNum = getPlayerNum(player);
 		
@@ -375,66 +378,48 @@ public class StandardBrickusModel implements BrickusModel {
 		if(testMessage.equals("true"))
 		{
 			//verify starting piece has been played
-			if(board[0][0] == playerNum || board[0][boardWidth-1] == playerNum || board[boardHeight-1][0] == playerNum || board[boardHeight-1][boardWidth-1] == playerNum)
-			{
-				started = true;
+			topFilled = board[0][0] == playerNum || board[0][boardWidth-1] == playerNum;
+			botFilled = board[boardHeight-1][0] == playerNum || board[boardHeight-1][boardWidth-1] == playerNum;
+			if(topFilled || botFilled)
+			{//started board already
 				//must be diagonal to a previous piece
 				for(int px = 0; px < piece.getWidth(); px++)
 					for(int py = 0; py < piece.getHeight(); py++)
-					{
-						if(piece.isOccupied(px, py))
-						{
-							if(px+x+1 < boardWidth)
+					{	//only count if occupies a square
+						if(piece.isOccupied(px, py)) 
+						{	//fits within board
+							if(0 <= px+x-1 && px+x+1 < boardWidth && 0 <= py+y-1 && py+y+1 < boardHeight )
 							{
-								if(py+y+1 < boardHeight)
-									if(board[py+y+1][px+x+1] == playerNum)
-										validDiagonal = true;
-								if(py+y-1 >= 0)
-									if(board[py+y-1][px+x+1] == playerNum)
-										validDiagonal = true;
-							}
-						
-							if(px+x-1 >= 0)
-							{
-								if(py+y+1 < boardHeight)
-									if(board[py+y+1][px+x-1] == playerNum)
-										validDiagonal = true;
-								if(py+y-1 >= 0)
-									if(board[py+y-1][px+x-1] == playerNum)
-										validDiagonal = true;
+								topDiagonal = board[py+y+1][px+x-1] == playerNum || board[py+y+1][px+x+1] == playerNum;
+								botDiagonal = board[py+y-1][px+x+1] == playerNum || board[py+y-1][px+x-1] == playerNum;
+								if(topDiagonal || botDiagonal )
+									validDiagonal = true;
 							}
 						}
 					}
-
-			
+				testMessage = "Pieces must touch pieces of the same color diagonally";
 			}
 			else // must place starting piece
 			{
+				testMessage = "A Player's first piece must be placed in a corner.";
 				for(int px = 0; px < piece.getWidth(); px++)
 					for(int py = 0; py < piece.getHeight(); py++)
 					{
 						if(piece.isOccupied(px, py))
 						{
-							//top side
-							if(py+y == 0)
+							//top side // and left or right edge
+							if(py+y == 0 && (px+x == 0 || px+x == boardWidth - 1))
 							{	
-								if(px+x == 0)//left side
-									validStart = true;
-								else if(px+x == boardWidth - 1)//right side
-									validStart = true;
-							}
-							//bottom side
-							if(py+y == boardHeight - 1)
+								validStart = true;
+							}//bottom side // and left or right edge
+							else if(py+y == boardHeight - 1 && (px+x == 0 || px+x == boardWidth - 1))
 							{
-								if(px+x == 0)//left side
-									validStart = true;
-								else if(px+x == boardWidth - 1)//right side
-									validStart = true;
+								validStart = true;
 							}
 						}
 					}
 			}
-		}
+		} //end isClear()
 
 		if(validStart || validDiagonal)
 		{
@@ -445,18 +430,14 @@ public class StandardBrickusModel implements BrickusModel {
 					if(piece.isOccupied(px, py))
 						board[py+y][px+x] = playerNum;
 				}	
-			//track that the piece was added
-			if(playerNum == 1)
-			{
-				player1pieces.remove(piece);
-				activePlayer = 2;
-			}
-			else if(playerNum == 2)
-			{
-				player2pieces.remove(piece);
+			//track that the piece was added and is no longer available
+			getPieces(player).remove(piece);
+			//switch player
+			playerChanged = true; 
+			activePlayer = (activePlayer + 1) % (numPlayers + 1);
+			if(activePlayer == 0){ //reset to first player
 				activePlayer = 1;
 			}
-			playerChanged = true;
 			
 			numPasses = 0; //player did not pass consecutively
 			BrickusEvent update = new BrickusEvent(myModel, playerChanged, false); //game ended is false
@@ -464,17 +445,8 @@ public class StandardBrickusModel implements BrickusModel {
 				listener.modelChanged(update);
 			}	
 		}
-		else //not valid
+		else //not valid so send the error message
 		{
-			if(!started && testMessage.equals("true")) //then was not a valid start
-			{
-				testMessage = "A Player's first piece must be placed in a corner.";
-			}
-			else if(!validDiagonal && testMessage.equals("true")) //then it was not diagonal
-			{
-				testMessage = "Pieces must touch pieces of the same color diagonally";
-			}
-
 			BrickusIllegalMoveEvent illegalEvent = new BrickusIllegalMoveEvent(testMessage);
 			for(BrickusListener listener: myModel.listeners){
 				listener.illegalMove(illegalEvent);

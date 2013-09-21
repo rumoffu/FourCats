@@ -1,9 +1,15 @@
 package edu.jhu.cs.tyung1.oose;
 
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.*;
+
+import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusEvent;
+import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusIllegalMoveEvent;
+import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusListener;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusModel;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusPiece;
 import edu.jhu.cs.oose.fall2013.brickus.iface.Player;
@@ -25,7 +31,10 @@ public class MyBrickusFrame extends JFrame {
 	public MyBrickusFrame(BrickusModel model) {
 		
 		this.model = model;
+		
 	}
+	
+	
 	
 	public void go() {
 		
@@ -199,6 +208,34 @@ class SinglePiece extends JPanel {
 		
 		return buffer;
 	}
+	
+	public class selectPieceHandler implements MouseListener {
+
+		public void mouseClicked(MouseEvent arg0) {
+		
+			
+		}
+
+		public void mouseEntered(MouseEvent arg0) {
+		
+			
+		}
+
+		public void mouseExited(MouseEvent arg0) {
+		
+			
+		}
+
+		public void mousePressed(MouseEvent arg0) {
+		
+			
+		}
+
+		public void mouseReleased(MouseEvent arg0) {
+		
+			
+		}
+	}
 }
 
 @SuppressWarnings("serial")
@@ -253,7 +290,12 @@ class MyBrickusTray extends JPanel {
 @SuppressWarnings("serial")
 class MyBrickusTracker extends JPanel {
 	
+	JLabel errorText;
+	
 	public MyBrickusTracker(BrickusModel model) {
+		
+		//REVIVE: make BrickusListener class
+		model.addBrickusListener(new ErrorHandler());
 		
 		this.setLayout(new GridBagLayout());
 		this.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -263,7 +305,7 @@ class MyBrickusTracker extends JPanel {
 		JPanel subpanelLeft = new JPanel(new BorderLayout());
 		JPanel subpanelRight = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 		
-		JLabel errorText = new JLabel("<html><font color=000000>Welcome to </font>");
+		errorText = new JLabel("<html><font color=000000>Welcome to </font>");
 		errorText.setText(errorText.getText() + "<font color=0000CC>F</font>");
 		errorText.setText(errorText.getText() + "<font color=CC0000>o</font>");
 		errorText.setText(errorText.getText() + "<font color=006600>u</font>");
@@ -295,5 +337,25 @@ class MyBrickusTracker extends JPanel {
 		constraints.gridwidth = 2;
 		constraints.weightx = 0;
 		this.add(subpanelRight, constraints);
+	}
+	
+	public void changeErrorMessage(String message) {
+		
+		errorText.setText(message);
+	}
+	
+	public class ErrorHandler implements BrickusListener {
+
+		public void illegalMove(BrickusIllegalMoveEvent event) {
+		
+			changeErrorMessage(event.getMessage());
+		}
+
+		public void modelChanged(BrickusEvent arg0) {
+		
+			return;
+		}
+		
+		
 	}
 }

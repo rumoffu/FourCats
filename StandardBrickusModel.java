@@ -7,16 +7,14 @@ package kyle.brickus;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusEvent;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusIllegalMoveEvent;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusListener;
 import edu.jhu.cs.oose.fall2013.brickus.iface.Player;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusModel;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusPiece;
-//import edu.jhu.cs.oose.fall2013.brickus.iface.Player;
 import kyle.brickus.StandardBrickusPiece;
-//import kyle.brickus.BrickusModel;
+
 /**
  * Class for managing the Brickus Model which controls the game logic.
  */
@@ -42,10 +40,6 @@ public class StandardBrickusModel implements BrickusModel {
 	Player PLAYER2 = Player.PLAYER2;
 	Player PLAYER3 = Player.PLAYER3;
 	Player PLAYER4 = Player.PLAYER4;
-	/*
-	public enum Player {
-		PLAYER1, PLAYER2, PLAYER3, PLAYER4;
-	}*/
 
 	/**
 	 * Constructor to initialize 21 Brickus pieces for each of the 2 players
@@ -460,6 +454,7 @@ public class StandardBrickusModel implements BrickusModel {
 	public void removeBrickusListener(BrickusListener listener) {
 		myModel.listeners.remove(listener);
 	}
+	
 		
 	/** 
 	* A helper function for placePiece which checks if the board area is clear for the piece to be placed.

@@ -1,11 +1,14 @@
 package edu.jhu.cs.tyung1.oose;
 
 import java.awt.*;
+import java.util.ArrayList;
+
 import javax.swing.*;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusModel;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusPiece;
 import edu.jhu.cs.oose.fall2013.brickus.iface.Player;
 
+//REVIVE: remove print statements
 @SuppressWarnings("serial")
 public class MyBrickusFrame extends JFrame {
 
@@ -32,21 +35,19 @@ public class MyBrickusFrame extends JFrame {
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.fill = GridBagConstraints.BOTH;
 		
-		// MyBrickusBoard board
-		// frame.getContentPane().add(BorderLayout.CENTER,board);
-		JPanel holdBoard = new JPanel();
-		holdBoard.setBorder(BorderFactory.createLineBorder(Color.black));
+		MyBrickusBoard board = new MyBrickusBoard(model);
+		board.setBorder(BorderFactory.createLineBorder(Color.black));
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.gridwidth = 1;
 		constraints.gridheight = 30;
 		constraints.weightx = 1;
 		constraints.weighty = 1;
-		frame.add(holdBoard, constraints);
+		frame.add(board, constraints);
 		
 		MyBrickusTray tray = new MyBrickusTray(model); // lower panel of pieces and pass button
 		constraints.gridx = 0;
-		constraints.gridy = 30;
+		constraints.gridy = 31;
 		constraints.gridwidth = 1;
 		constraints.gridheight = 9;
 		constraints.weightx = 1;
@@ -69,9 +70,55 @@ public class MyBrickusFrame extends JFrame {
 }
 
 @SuppressWarnings("serial")
-class singlePiece extends JPanel {
+class MyBrickusBoard extends JComponent {
 	
-	public singlePiece(BrickusModel model, BrickusPiece piece) {
+	int numCol;
+	int numRow;
+	java.util.List<Rectangle> cells;
+	Point coveredCell; // the cell over which the mouse is currently.
+	
+	public MyBrickusBoard(BrickusModel model) {
+		
+		numCol = model.getWidth();
+		numRow = model.getHeight() + 1;
+		cells = new ArrayList<>(numCol * numRow);
+	}
+	
+	public void paintComponent(Graphics g) {
+		
+		super.paintComponent(g);
+		Graphics2D g2D = (Graphics2D) g.create();
+		
+		int cellWidth = getWidth() / numCol;
+        int cellHeight = getHeight() / numRow;
+        int widthBuffer = (getWidth() - (numCol * cellWidth)) / 2;
+        int heightBuffer = (getHeight() - (numRow * cellHeight)) / 2;
+        
+        if (cells.isEmpty()) {
+            for (int r = 0; r < numRow; r++) {
+                for (int c = 0; c < numCol; c++) {
+                    Rectangle cell = new Rectangle(
+                            widthBuffer + (c * cellWidth),
+                            heightBuffer + (r * cellHeight),
+                            cellWidth,
+                            cellHeight);
+                    cells.add(cell);
+                }
+            }
+        }
+        
+        g2D.setColor(Color.GRAY);
+        for (Rectangle cell : cells) {
+            g2D.draw(cell);
+        }
+        //g2D.dispose();
+	}
+}
+
+@SuppressWarnings("serial")
+class SinglePiece extends JPanel {
+	
+	public SinglePiece(BrickusModel model, BrickusPiece piece) {
 		
 		this.setLayout(new GridLayout(5, 5));
 		this.setBackground(Color.white);
@@ -98,7 +145,6 @@ class singlePiece extends JPanel {
 					
 					JPanel brick = new JPanel();
 					brick.setBackground(Color.white);
-					//brick.setBorder(BorderFactory.createLineBorder(Color.black));
 					this.add(brick);
 				}
 			}
@@ -110,7 +156,6 @@ class singlePiece extends JPanel {
 						
 						JPanel brick = new JPanel();
 						brick.setBackground(Color.white);
-						//brick.setBorder(BorderFactory.createLineBorder(Color.black));
 						this.add(brick);
 					}
 					else {
@@ -122,7 +167,6 @@ class singlePiece extends JPanel {
 						}
 						else {
 						brick.setBackground(Color.white);
-						//brick.setBorder(BorderFactory.createLineBorder(Color.black));
 						}
 						this.add(brick);
 					}
@@ -170,7 +214,7 @@ class pieceTray extends JPanel {
 			//JPanel holdPiece = new JPanel();
 			//holdPiece.setBorder(BorderFactory.createLineBorder(Color.black));
 			//this.add(holdPiece);
-			singlePiece newPiece = new singlePiece(model, piece);
+			SinglePiece newPiece = new SinglePiece(model, piece);
 			this.add(newPiece);
 		}
 	}

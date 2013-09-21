@@ -14,7 +14,7 @@ import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusIllegalMoveEvent;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusListener;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusModel;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusPiece;
-//import edu.jhu.cs.oose.fall2013.brickus.iface.Player;
+import edu.jhu.cs.oose.fall2013.brickus.iface.Player;
 import kyle.brickus.StandardBrickusPiece;
 
 /**
@@ -34,13 +34,18 @@ public class StandardBrickusModel implements BrickusModel {
 	private java.util.List<BrickusPiece> player4pieces= new java.util.ArrayList<BrickusPiece>();
 	private List<List<BrickusPiece>> playerpieces = new ArrayList<List<BrickusPiece>>(numPlayers);
 	public java.util.List<BrickusListener> listeners = new java.util.ArrayList<BrickusListener>();
-	private java.util.List<Player> players = new java.util.ArrayList<Player>();
-	private int numPasses = 0;
-	//private static final Player p1;
 	
+	private int numPasses = 0;
+	
+	private java.util.List<Player> players = new java.util.ArrayList<Player>();
+	Player PLAYER1 = Player.PLAYER1;
+	Player PLAYER2 = Player.PLAYER2;
+	Player PLAYER3;
+	Player PLAYER4;
+	/*
 	public enum Player {
 		PLAYER1, PLAYER2, PLAYER3, PLAYER4;
-	}
+	}*/
 
 	/**
 	 * Constructor to initialize 21 Brickus pieces for each of the 2 players
@@ -48,10 +53,10 @@ public class StandardBrickusModel implements BrickusModel {
 	public StandardBrickusModel() {
 		
 		initializeBoard();
-		players.add(Player.PLAYER1);
-		players.add(Player.PLAYER2);
-		players.add(Player.PLAYER3);
-		players.add(Player.PLAYER4);
+		players.add(PLAYER1);
+		players.add(PLAYER2);
+		players.add(PLAYER3);
+		players.add(PLAYER4);
 		
 		playerpieces.add(player1pieces);
 		playerpieces.add(player2pieces);
@@ -211,17 +216,17 @@ public class StandardBrickusModel implements BrickusModel {
 	public int calculateScore(Player player){
 		int score = 0;
 		int playerNum = 0;
-		///System.out.println(player.toString());
+		System.out.println(player.toString());
 		///System.out.println(Player.valueOf(player.toString()));
 		///System.out.println(Player.values());
 		
-		if(player == Player.PLAYER1)
+		if(player == PLAYER1)
 			playerNum = 1;
-		else if(player == Player.PLAYER2)
+		else if(player == PLAYER2)
 			playerNum = 2;
-		else if(player == Player.PLAYER3)
+		else if(player == PLAYER3)
 			playerNum = 3;
-		else if(player == Player.PLAYER4)
+		else if(player == PLAYER4)
 			playerNum = 4;
 		else
 		{
@@ -247,9 +252,9 @@ public class StandardBrickusModel implements BrickusModel {
 	public Player getActivePlayer(){
 		Player player;
 		if(activePlayer == 1)
-			player = Player.PLAYER1;
+			player = PLAYER1;
 		else if (activePlayer == 2)
-			player = Player.PLAYER2;
+			player = PLAYER2;
 		else
 		{
 			player = null;
@@ -267,9 +272,9 @@ public class StandardBrickusModel implements BrickusModel {
 	public Player getContents(int x, int y) {
 		Player player;
 		if(board[y][x] == 1)
-			player = Player.PLAYER1;
+			player = PLAYER1;
 		else if(board[y][x] == 2)
-			player = Player.PLAYER2;
+			player = PLAYER2;
 		else //unoccupied
 			player = null;
 		return player;
@@ -290,9 +295,9 @@ public class StandardBrickusModel implements BrickusModel {
 	 */
 	public java.util.List<BrickusPiece> getPieces(Player player){
 		List<BrickusPiece> theList;
-		if(player == Player.PLAYER1)
+		if(player == PLAYER1)
 			theList = player1pieces;
-		else if(player == Player.PLAYER2)
+		else if(player == PLAYER2)
 			theList = player2pieces;
 		else
 		{
@@ -315,9 +320,9 @@ public class StandardBrickusModel implements BrickusModel {
 	 * @param player the Player who has passed his or her turn
 	 */
 	public void pass(Player player) {
-		if(player == Player.PLAYER1)
+		if(player == PLAYER1)
 			activePlayer = 2;
-		else if(player == Player.PLAYER2)
+		else if(player == PLAYER2)
 			activePlayer = 1;
 		else
 		{
@@ -357,9 +362,9 @@ public class StandardBrickusModel implements BrickusModel {
 		String testMessage;
 		//find player number
 		int playerNum;
-		if(player == Player.PLAYER1)
+		if(player == PLAYER1)
 			playerNum = 1;
-		else if(player == Player.PLAYER2)
+		else if(player == PLAYER2)
 			playerNum = 2;
 		else
 		{

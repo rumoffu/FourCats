@@ -3,11 +3,13 @@ package edu.jhu.cs.tyung1.oose;
 import java.awt.*;
 import javax.swing.*;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusModel;
+import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusPiece;
 
 @SuppressWarnings("serial")
 public class MyBrickusFrame extends JFrame {
 
 	JFrame frame;
+	BrickusModel model;
 	
 	public static void main(String[] args) {
 
@@ -18,7 +20,7 @@ public class MyBrickusFrame extends JFrame {
 	
 	public MyBrickusFrame(BrickusModel model) {
 		
-		
+		this.model = model;
 	}
 	
 	public void go() {
@@ -41,7 +43,7 @@ public class MyBrickusFrame extends JFrame {
 		constraints.weighty = 1;
 		frame.add(holdBoard, constraints);
 		
-		MyBrickusTray tray = new MyBrickusTray(); // lower panel of pieces and pass button
+		MyBrickusTray tray = new MyBrickusTray(model); // lower panel of pieces and pass button
 		//frame.getContentPane().add(BorderLayout.CENTER, tray.panel);
 		constraints.gridx = 0;
 		constraints.gridy = 30;
@@ -49,9 +51,9 @@ public class MyBrickusFrame extends JFrame {
 		constraints.gridheight = 9;
 		constraints.weightx = 1;
 		constraints.weighty = 0;
-		frame.add(tray.panel, constraints);
+		frame.add(tray, constraints);
 		
-		MyBrickusTracker tracker = new MyBrickusTracker(); // error board, score boards
+		MyBrickusTracker tracker = new MyBrickusTracker(model); // error board, score boards
 		//frame.getContentPane().add(BorderLayout.PAGE_END, tracker.panel);
 		constraints.gridx = 0;
 		constraints.gridy = 39;
@@ -59,7 +61,7 @@ public class MyBrickusFrame extends JFrame {
 		constraints.gridheight = 1;
 		constraints.weightx = 1;
 		constraints.weighty = 0;
-		frame.add(tracker.panel, constraints);
+		frame.add(tracker, constraints);
 		
 		frame.setSize(670,710);
 		frame.setLocationRelativeTo(null);
@@ -68,41 +70,59 @@ public class MyBrickusFrame extends JFrame {
 }
 
 @SuppressWarnings("serial")
+class pieceTray extends JPanel {
+	
+	public pieceTray(BrickusModel model) {
+		
+		this.setLayout(new GridLayout(3, 7));
+		this.setBorder(BorderFactory.createLineBorder(Color.black));
+		
+		for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
+			
+			JPanel holdPiece = new JPanel();
+			holdPiece.setBorder(BorderFactory.createLineBorder(Color.black));
+			this.add(holdPiece);
+		}
+	}
+}
+
+@SuppressWarnings("serial")
 class MyBrickusTray extends JPanel {
 	
-	JPanel panel = new JPanel(new GridBagLayout());
-	
-	public MyBrickusTray() {
+	public MyBrickusTray(BrickusModel model) {
 		
-		panel.setBorder(BorderFactory.createLineBorder(Color.black));		
+		this.setLayout(new GridBagLayout());
+		this.setBorder(BorderFactory.createLineBorder(Color.black));		
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.fill = GridBagConstraints.BOTH;
 		
-		JPanel holdPieceTray = new JPanel();
-		holdPieceTray.setBorder(BorderFactory.createLineBorder(Color.black));
+		//JPanel holdPieceTray = new JPanel();
+		//holdPieceTray.setBorder(BorderFactory.createLineBorder(Color.black));
+		pieceTray pieceTray = new pieceTray(model);
+		pieceTray.setBorder(BorderFactory.createLineBorder(Color.black));
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.gridwidth = 7;
 		constraints.weightx = 1;
-		panel.add(holdPieceTray, constraints);
+		//this.add(holdPieceTray, constraints);
+		this.add(pieceTray, constraints);
 		
 		JButton passButton = new JButton("Pass");
 		constraints.gridx = 7;
 		constraints.gridy = 0;
 		constraints.gridwidth = 1;
 		constraints.weightx = 0;
-		panel.add(passButton, constraints);
+		this.add(passButton, constraints);
 	}
 }
 
 @SuppressWarnings("serial")
 class MyBrickusTracker extends JPanel {
 	
-	JPanel panel = new JPanel(new GridBagLayout());
-	
-	public MyBrickusTracker() {
+	public MyBrickusTracker(BrickusModel model) {
 		
-		panel.setBorder(BorderFactory.createLineBorder(Color.black));
+		this.setLayout(new GridBagLayout());
+		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.fill = GridBagConstraints.HORIZONTAL;
 		
@@ -134,12 +154,12 @@ class MyBrickusTracker extends JPanel {
 		constraints.gridy = 0;
 		constraints.gridwidth = 5;
 		constraints.weightx = 1;
-		panel.add(subpanelLeft, constraints);
+		this.add(subpanelLeft, constraints);
 		
 		constraints.gridx = 5;
 		constraints.gridy = 0;
 		constraints.gridwidth = 2;
 		constraints.weightx = 0;
-		panel.add(subpanelRight, constraints);
+		this.add(subpanelRight, constraints);
 	}
 }

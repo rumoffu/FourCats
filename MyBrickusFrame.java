@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusModel;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusPiece;
+import edu.jhu.cs.oose.fall2013.brickus.iface.Player;
 
 @SuppressWarnings("serial")
 public class MyBrickusFrame extends JFrame {
@@ -44,7 +45,6 @@ public class MyBrickusFrame extends JFrame {
 		frame.add(holdBoard, constraints);
 		
 		MyBrickusTray tray = new MyBrickusTray(model); // lower panel of pieces and pass button
-		//frame.getContentPane().add(BorderLayout.CENTER, tray.panel);
 		constraints.gridx = 0;
 		constraints.gridy = 30;
 		constraints.gridwidth = 1;
@@ -54,7 +54,6 @@ public class MyBrickusFrame extends JFrame {
 		frame.add(tray, constraints);
 		
 		MyBrickusTracker tracker = new MyBrickusTracker(model); // error board, score boards
-		//frame.getContentPane().add(BorderLayout.PAGE_END, tracker.panel);
 		constraints.gridx = 0;
 		constraints.gridy = 39;
 		constraints.gridwidth = 1;
@@ -70,6 +69,86 @@ public class MyBrickusFrame extends JFrame {
 }
 
 @SuppressWarnings("serial")
+class singlePiece extends JPanel {
+	
+	public singlePiece(BrickusModel model, BrickusPiece piece) {
+		
+		this.setLayout(new GridLayout(5, 5));
+		
+		int heightBuffer = calculateBuffer(piece.getHeight());
+		int widthBuffer = calculateBuffer(piece.getWidth());
+		
+		Player activePlayer = model.getActivePlayer();
+		Color playerColor;
+		if(activePlayer == Player.PLAYER1) {
+			playerColor = Color.blue;
+		}
+		else {
+			playerColor = Color.red;
+		} //REVIVE: put in all 4 Players
+		
+		for(int i=0; i<5; i++) { // columns of the piece
+			
+			if(i<widthBuffer) {
+				JPanel brick = new JPanel();
+				brick.setBackground(Color.RED);
+				brick.setBorder(BorderFactory.createLineBorder(Color.black));
+				this.add(brick);
+			}
+			
+			else {
+				for(int j=0; j<5; j++) { // rows of the piece
+				
+					if(j<heightBuffer) {
+						JPanel brick = new JPanel();
+						brick.setBackground(Color.GREEN);
+						brick.setBorder(BorderFactory.createLineBorder(Color.black));
+						this.add(brick);
+					}
+					else {
+						JPanel brick = new JPanel();
+						if(piece.isOccupied(i-widthBuffer, j-heightBuffer)) {
+							brick.setBackground(playerColor);
+							brick.setBorder(BorderFactory.createLineBorder(Color.black));
+						}
+						else {
+							brick.setBackground(Color.white);
+							brick.setBorder(BorderFactory.createLineBorder(Color.black));
+						}
+						this.add(brick);
+					}
+				}
+			}
+		}
+	}
+	
+	public int calculateBuffer(int pieceDimension) {
+		
+		int buffer = 0;
+		
+		switch(pieceDimension) {
+		case 1:
+			buffer = 2;
+			break;
+		case 2:
+			buffer = 1;
+			break;
+		case 3:
+			buffer = 1;
+			break;
+		case 4:
+			buffer = 0;
+			break;
+		case 5:
+			buffer = 0;
+			break;
+		}
+		
+		return buffer;
+	}
+}
+
+@SuppressWarnings("serial")
 class pieceTray extends JPanel {
 	
 	public pieceTray(BrickusModel model) {
@@ -79,9 +158,11 @@ class pieceTray extends JPanel {
 		
 		for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
 			
-			JPanel holdPiece = new JPanel();
-			holdPiece.setBorder(BorderFactory.createLineBorder(Color.black));
-			this.add(holdPiece);
+			//JPanel holdPiece = new JPanel();
+			//holdPiece.setBorder(BorderFactory.createLineBorder(Color.black));
+			//this.add(holdPiece);
+			singlePiece newPiece = new singlePiece(model, piece);
+			this.add(newPiece);
 		}
 	}
 }

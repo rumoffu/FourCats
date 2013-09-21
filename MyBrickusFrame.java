@@ -25,15 +25,41 @@ public class MyBrickusFrame extends JFrame {
 		
 		frame = new JFrame();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setLayout(new GridBagLayout());
+		GridBagConstraints constraints = new GridBagConstraints();
+		constraints.fill = GridBagConstraints.BOTH;
 		
 		// MyBrickusBoard board
 		// frame.getContentPane().add(BorderLayout.CENTER,board);
+		JPanel holdBoard = new JPanel();
+		holdBoard.setBorder(BorderFactory.createLineBorder(Color.black));
+		constraints.gridx = 0;
+		constraints.gridy = 0;
+		constraints.gridwidth = 1;
+		constraints.gridheight = 30;
+		constraints.weightx = 1;
+		constraints.weighty = 1;
+		frame.add(holdBoard, constraints);
 		
 		MyBrickusTray tray = new MyBrickusTray(); // lower panel of pieces and pass button
-		frame.getContentPane().add(BorderLayout.CENTER, tray.panel);
+		//frame.getContentPane().add(BorderLayout.CENTER, tray.panel);
+		constraints.gridx = 0;
+		constraints.gridy = 30;
+		constraints.gridwidth = 1;
+		constraints.gridheight = 9;
+		constraints.weightx = 1;
+		constraints.weighty = 0;
+		frame.add(tray.panel, constraints);
 		
 		MyBrickusTracker tracker = new MyBrickusTracker(); // error board, score boards
-		frame.getContentPane().add(BorderLayout.PAGE_END, tracker.panel);
+		//frame.getContentPane().add(BorderLayout.PAGE_END, tracker.panel);
+		constraints.gridx = 0;
+		constraints.gridy = 39;
+		constraints.gridwidth = 1;
+		constraints.gridheight = 1;
+		constraints.weightx = 1;
+		constraints.weighty = 0;
+		frame.add(tracker.panel, constraints);
 		
 		frame.setSize(670,710);
 		frame.setLocationRelativeTo(null);

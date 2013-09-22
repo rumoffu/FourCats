@@ -163,8 +163,8 @@ class Composite extends JComponent {
 	                int cellWidth = width / numCol;
 	                int cellHeight = height / numRow;
 	
-	                int coveredx = e.getX() / cellWidth;
-	                int coveredy = e.getY() / cellHeight;
+	                coveredx = e.getX() / cellWidth;
+	                coveredy = e.getY() / cellHeight;
 	                coveredCell = new Point(coveredx, coveredy);
 	
 	                repaint();
@@ -212,6 +212,11 @@ class Composite extends JComponent {
 		        	 else if(mygrid[row][col] == 4)
 		        	 {
 		        		 g.setColor(player4color);
+		        	 }
+		        	 if(row == coveredy && col == coveredx)
+		        	 {
+		        		 System.out.println(coveredx + "|" + coveredy);
+		        		 g.setColor(Color.RED);
 		        	 }
 		        	 g.fillRect(col*cellWidth+col+xOffset,row*cellHeight+row+yOffset,cellWidth, cellHeight);
 		         }

@@ -184,21 +184,15 @@ class Composite extends JComponent {
             int height = this.getHeight();
             g.setColor(Color.BLACK);
             g.fillRect(0,0,width, height);
-            int cellWidth = width / numCol;
-            int cellHeight = height / numRow;
-            //int xoffset = (width - numCol-1) /numCol;
-            //int yoffset = (height - numRow-1) / numRow;
-            int xoffset = 1;
-            int yoffset = 1;
-            int xOffset = (width - (numCol * cellWidth)) / 2;
-            int yOffset = (height - (numRow * cellHeight)) / 2;
-            
-            int x, y;
+            int cellWidth = (width-numCol) / (numCol);//+1);
+            int cellHeight = (height -numRow)/ (numRow);//+1);
+
+
+            int xOffset = (width - (numCol * cellWidth)) / 4;
+            int yOffset = (height - (numRow * cellHeight)) / 4;
 			//System.out.println("xy: " + coveredx + " " + coveredy);
 			for (int row = 0; row < numRow; row++) {
 		         for (int col = 0; col < numCol; col++) {
-		        	 x = (col+1)*cellWidth;
-		        	 y = (row+1)*cellHeight;
 		        	 if(mygrid[row][col] == 0)
 		        	 {
 		        		 g.setColor(Color.WHITE);
@@ -219,9 +213,7 @@ class Composite extends JComponent {
 		        	 {
 		        		 g.setColor(player4color);
 		        	 }
-		        	 g.fillRect((x-1)+xoffset,(y-1)+yoffset,x, y);
-		        	 //System.out.println(x + " " + y);
-		        	 //System.out.println(xoffset + "|" + yoffset);
+		        	 g.fillRect(col*cellWidth+col+xOffset,row*cellHeight+row+yOffset,cellWidth, cellHeight);
 		         }
 		      }
 	        if (coveredCell != null) 

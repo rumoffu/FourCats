@@ -122,8 +122,6 @@ class Composite extends JComponent {
 		tray.updateSinglePiece(model);
 	}
 
-	
-	
 	class MyBrickusBoard extends JComponent {
 		private JLabel[][] myLabels;
 		int numCol;
@@ -421,14 +419,14 @@ class Composite extends JComponent {
 			
 			player1Score = new JLabel("<html><font color = 0000CC>Score: 0 </font>");
 			player2Score = new JLabel("<html><font color = CC0000>Score: 0 </font>");
-			player3Score = new JLabel("<html><font color = 006600>Score: 0 </font>");
-			player4Score = new JLabel("<html><font color = FF0066>Score: 0 </font>");
+			//player3Score = new JLabel("<html><font color = 006600>Score: 0 </font>");
+			//player4Score = new JLabel("<html><font color = FF0066>Score: 0 </font>");
 			
 			subpanelLeft.add(errorText);
 			subpanelRight.add(player1Score);
 			subpanelRight.add(player2Score);
-			subpanelRight.add(player3Score);
-			subpanelRight.add(player4Score);
+			//subpanelRight.add(player3Score);
+			//subpanelRight.add(player4Score);
 			
 			constraints.gridx = 0;
 			constraints.gridy = 0;
@@ -439,7 +437,7 @@ class Composite extends JComponent {
 			constraints.gridx = 5;
 			constraints.gridy = 0;
 			constraints.gridwidth = 2;
-			constraints.weightx = 0;
+			constraints.weightx = 1;
 			this.add(subpanelRight, constraints);
 		}
 		

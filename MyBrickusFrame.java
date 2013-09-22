@@ -19,7 +19,7 @@ public class MyBrickusFrame extends JFrame {
 	
 	public static void main(String[] args) {
 
-		BrickusModel model = new edu.jhu.cs.oose.fall2013.brickus.model.StandardBrickusModel(); //REVIVE: use own model class.
+		BrickusModel model = new edu.jhu.cs.oose.fall2013.brickus.model.StandardBrickusModel();
 		MyBrickusFrame gui = new MyBrickusFrame(model);
 		gui.go();
 	}
@@ -109,7 +109,6 @@ class Composite extends JComponent {
 		
 		activePiece = panel.selected();
 		//I HAVE THE SELECTED PIECE
-		
 	}
 	
 	public void updateScores(int score1, int score2) {
@@ -121,8 +120,6 @@ class Composite extends JComponent {
 		
 		tray.updateSinglePiece(model);
 	}
-
-	
 	
 	class MyBrickusBoard extends JComponent {
 
@@ -183,7 +180,6 @@ class Composite extends JComponent {
 	                coveredCell = new Point(coveredx, coveredy);
 	
 	                repaint();
-	
 	            }
 	        };
 	        addMouseMotionListener(mouseHandler);
@@ -195,10 +191,8 @@ class Composite extends JComponent {
 			
 		}
 		public void placePiece(){
-			//System.out.println("HI");
-			//System.out.println(model.getActivePlayer() + " "+ coveredx + " " + coveredy + " " + activePiece);
+
 			model.placePiece(model.getActivePlayer(), coveredx, coveredy, activePiece);
-			System.out.println("ewww");
 		}
 		public void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -209,10 +203,9 @@ class Composite extends JComponent {
             int cellWidth = (width-numCol) / (numCol);//+1);
             int cellHeight = (height -numRow)/ (numRow);//+1);
 
-
             int xOffset = (width - (numCol * cellWidth)) / 4;
             int yOffset = (height - (numRow * cellHeight)) / 4;
-			//System.out.println("xy: " + coveredx + " " + coveredy);
+
 			for (int row = 0; row < numRow; row++) {
 		         for (int col = 0; col < numCol; col++) {
 		        	 if(mygrid[row][col] == 0)
@@ -237,7 +230,6 @@ class Composite extends JComponent {
 		        	 }
 		        	 if(row == coveredy && col == coveredx)
 		        	 {
-		        		 //System.out.println(coveredx + "|" + coveredy);
 		        		 g.setColor(Color.RED);
 		        	 }
 		        	 g.fillRect(col*cellWidth+col+xOffset,row*cellHeight+row+yOffset,cellWidth, cellHeight);
@@ -262,17 +254,15 @@ class Composite extends JComponent {
 			this.addMouseListener(myListener);
 			int heightBuffer = calculateBuffer(piece.getHeight());
 			int widthBuffer = calculateBuffer(piece.getWidth());
-			//System.out.println(piece.getWidth() + " " +  widthBuffer);
-			//System.out.println(piece.getHeight() + " " + heightBuffer);
 			
 			Player activePlayer = model.getActivePlayer();
 			Color playerColor;
 			if(activePlayer == Player.PLAYER1) {
-				playerColor = Color.blue;
+				playerColor = Color.red;
 			}
 			else {
-				playerColor = Color.red;
-			} //REVIVE: put in all 4 Players
+				playerColor = Color.blue;
+			}
 			
 			for(int h=0; h<5; h++) {
 				
@@ -298,7 +288,6 @@ class Composite extends JComponent {
 						else {
 							
 							JPanel brick = new JPanel();
-							//System.out.println((w-widthBuffer) + " " + (h-heightBuffer));
 							if(piece.isOccupied(w-widthBuffer, h-heightBuffer)) {
 								brick.setBackground(playerColor);
 								brick.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -340,7 +329,7 @@ class Composite extends JComponent {
 		public BrickusPiece selected(){
 			
 			//highlight myself
-			//System.out.println(mypiece);
+			System.out.println("OUCH!");
 			this.setBackground(Color.yellow);
 			return mypiece;
 		}
@@ -363,9 +352,9 @@ class Composite extends JComponent {
 		public void updateSinglePiece(BrickusModel model, MyMouseListener myListener) {
 			
 			this.removeAll();
-			
+			this.repaint();
+			this.setBackground(Color.white);
 			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
-				
 				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
 				this.add(newPiece);
 			}
@@ -432,23 +421,24 @@ class Composite extends JComponent {
 			JPanel subpanelLeft = new JPanel(new BorderLayout());
 			JPanel subpanelRight = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 			
-			errorText = new JLabel("<html><font color=000000>Welcome to </font>");
+			errorText = new JLabel();
+			/*errorText = new JLabel("<html><font color=000000>Welcome to </font>");
 			errorText.setText(errorText.getText() + "<font color=0000CC>F</font>");
 			errorText.setText(errorText.getText() + "<font color=CC0000>o</font>");
 			errorText.setText(errorText.getText() + "<font color=006600>u</font>");
 			errorText.setText(errorText.getText() + "<font color=FF0066>r</font");
-			errorText.setText(errorText.getText() + "<font color=000000>Cats! =^.^=");
+			errorText.setText(errorText.getText() + "<font color=000000>Cats! =^.^=");*/
 			
 			player1Score = new JLabel("<html><font color = 0000CC>Score: 0 </font>");
 			player2Score = new JLabel("<html><font color = CC0000>Score: 0 </font>");
-			player3Score = new JLabel("<html><font color = 006600>Score: 0 </font>");
-			player4Score = new JLabel("<html><font color = FF0066>Score: 0 </font>");
+			//player3Score = new JLabel("<html><font color = 006600>Score: 0 </font>");
+			//player4Score = new JLabel("<html><font color = FF0066>Score: 0 </font>");
 			
 			subpanelLeft.add(errorText);
 			subpanelRight.add(player1Score);
 			subpanelRight.add(player2Score);
-			subpanelRight.add(player3Score);
-			subpanelRight.add(player4Score);
+			//subpanelRight.add(player3Score);
+			//subpanelRight.add(player4Score);
 			
 			constraints.gridx = 0;
 			constraints.gridy = 0;
@@ -472,9 +462,6 @@ class Composite extends JComponent {
 			
 			player1Score.setText("<html><font color = 0000CC>Score: " + score1 + "</font>");
 			player2Score.setText("<html><font color = CC0000>Score: " + score2 + "</font>");
-			//REVIVE: add additional Players
-			//player3Score.setText("<html><font color = 006600>Score: " + 0 + "</font>");
-			//player4Score.setText("<html><font color = FF0066>Score: " + 0 + "</font>");
 		}
 	}
 }
@@ -493,12 +480,11 @@ class MyBrickusListener implements BrickusListener {
 	}
 
 	public void modelChanged(BrickusEvent event) {
-		System.out.println("ahppp");
+
 		if(!event.isGameOver()) {
 
 			composite.updateScores(composite.model.calculateScore(Player.PLAYER1), composite.model.calculateScore(Player.PLAYER2));
 			composite.updateSinglePiece(composite.model);
-			System.out.println("hppp");
 		}
 		else {
 			composite.tray.passButton.removeActionListener(composite.tray.buttonListener);

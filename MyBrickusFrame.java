@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 
 import javax.swing.*;
 
@@ -77,23 +76,23 @@ class Composite extends JComponent {
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.gridwidth = 1;
-		constraints.gridheight = 30;
+		constraints.gridheight = 1;
 		constraints.weightx = 1;
 		constraints.weighty = 1;
 		this.add(board, constraints);
-		
+
 		tray = new MyBrickusTray(model, myListener); // lower panel of pieces and pass button
 		constraints.gridx = 0;
-		constraints.gridy = 30;
+		constraints.gridy = 1;
 		constraints.gridwidth = 1;
-		constraints.gridheight = 9;
+		constraints.gridheight = 1;
 		constraints.weightx = 1;
 		constraints.weighty = 0;
 		this.add(tray, constraints);
-		
+
 		tracker = new MyBrickusTracker(model); // error board, score boards
 		constraints.gridx = 0;
-		constraints.gridy = 39;
+		constraints.gridy = 2;
 		constraints.gridwidth = 1;
 		constraints.gridheight = 1;
 		constraints.weightx = 1;
@@ -125,7 +124,7 @@ class Composite extends JComponent {
 	
 	
 	class MyBrickusBoard extends JComponent {
-		private JLabel[][] myLabels;
+
 		int numCol;
 		int numRow;
 		int[][] mygrid;
@@ -134,7 +133,6 @@ class Composite extends JComponent {
 		Point coveredCell;
 		int cellWidth = 20;
 		
-		private JLabel coveredSquare;
 		
 		public MyBrickusBoard(BrickusModel model, MyMouseListener myListener) {
 	
@@ -153,9 +151,6 @@ class Composite extends JComponent {
 			mygrid[4][4] = 3;
 			mygrid[6][6] = 4;
 			
-			myLabels = new JLabel[numRow][numCol];
-			Dimension labelPrefSize = new Dimension(cellWidth, cellWidth);
-			setLayout(new GridLayout(numRow, numCol));
 	        MouseAdapter mouseHandler;
 	        mouseHandler = new MouseAdapter() {
 	            @Override
@@ -172,25 +167,11 @@ class Composite extends JComponent {
 	                int coveredy = e.getY() / cellHeight;
 	                coveredCell = new Point(coveredx, coveredy);
 	
-	        		// i want to getsource and then find its x y
-	        		coveredSquare = (JLabel) e.getSource();
 	                repaint();
 	
 	            }
 	        };
-			for (int row = 0; row < myLabels.length; row++) {
-		         for (int col = 0; col < myLabels[row].length; col++) {
-		            JLabel myLabel = new JLabel();
-		            myLabel.setOpaque(true);
-		            myLabel.setBackground(Color.WHITE);
-		            myLabel.addMouseListener(myListener);
-		            myLabel.setPreferredSize(labelPrefSize);
-		            myLabel.setBorder(BorderFactory.createLineBorder(Color.black));
-		            myLabel.addMouseMotionListener(mouseHandler);
-		            add(myLabel);
-		            myLabels[row][col] = myLabel;
-		         }
-		      }
+	        addMouseMotionListener(mouseHandler);
 	
 	        
 		}
@@ -198,35 +179,54 @@ class Composite extends JComponent {
 			
 		}
 		public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            int width = this.getWidth();
+            int height = this.getHeight();
+            g.setColor(Color.BLACK);
+            g.fillRect(0,0,width, height);
+            int cellWidth = width / numCol;
+            int cellHeight = height / numRow;
+            //int xoffset = (width - numCol-1) /numCol;
+            //int yoffset = (height - numRow-1) / numRow;
+            int xoffset = 1;
+            int yoffset = 1;
+            int xOffset = (width - (numCol * cellWidth)) / 2;
+            int yOffset = (height - (numRow * cellHeight)) / 2;
+            
+            int x, y;
 			//System.out.println("xy: " + coveredx + " " + coveredy);
-			for (int row = 0; row < myLabels.length; row++) {
-		         for (int col = 0; col < myLabels[row].length; col++) {
+			for (int row = 0; row < numRow; row++) {
+		         for (int col = 0; col < numCol; col++) {
+		        	 x = (col+1)*cellWidth;
+		        	 y = (row+1)*cellHeight;
 		        	 if(mygrid[row][col] == 0)
 		        	 {
-		        		 myLabels[row][col].setBackground(Color.WHITE);
+		        		 g.setColor(Color.WHITE);
 		        	 }
 		        	 else if(mygrid[row][col] == 1)
 		        	 {
-		        		 myLabels[row][col].setBackground(player1color);
+		        		 g.setColor(player1color);
 		        	 }
 		        	 else if(mygrid[row][col] == 2)
 		        	 {
-		        		 myLabels[row][col].setBackground(player2color);
+		        		 g.setColor(player2color);
 		        	 }
 		        	 else if(mygrid[row][col] == 3)
 		        	 {
-		        		 myLabels[row][col].setBackground(player3color);
+		        		 g.setColor(player3color);
 		        	 }
 		        	 else if(mygrid[row][col] == 4)
 		        	 {
-		        		 myLabels[row][col].setBackground(player4color);
+		        		 g.setColor(player4color);
 		        	 }
-		        	 
+		        	 g.fillRect((x-1)+xoffset,(y-1)+yoffset,x, y);
+		        	 //System.out.println(x + " " + y);
+		        	 //System.out.println(xoffset + "|" + yoffset);
 		         }
 		      }
 	        if (coveredCell != null) 
-	        {
-	        	coveredSquare.setBackground(Color.RED);
+	        {	//affect the coveredCell
+	        	//coveredSquare.setBackground(Color.RED);
 	        }
 		}
 		

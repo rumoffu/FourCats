@@ -4,7 +4,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 import javax.swing.*;
 
@@ -77,23 +78,23 @@ class Composite extends JComponent {
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		constraints.gridwidth = 1;
-		constraints.gridheight = 30;
+		constraints.gridheight = 1;
 		constraints.weightx = 1;
 		constraints.weighty = 1;
 		this.add(board, constraints);
-		
+
 		tray = new MyBrickusTray(model, myListener); // lower panel of pieces and pass button
 		constraints.gridx = 0;
-		constraints.gridy = 30;
+		constraints.gridy = 1;
 		constraints.gridwidth = 1;
-		constraints.gridheight = 9;
+		constraints.gridheight = 1;
 		constraints.weightx = 1;
 		constraints.weighty = 0;
 		this.add(tray, constraints);
-		
+
 		tracker = new MyBrickusTracker(model); // error board, score boards
 		constraints.gridx = 0;
-		constraints.gridy = 39;
+		constraints.gridy = 2;
 		constraints.gridwidth = 1;
 		constraints.gridheight = 1;
 		constraints.weightx = 1;
@@ -110,6 +111,7 @@ class Composite extends JComponent {
 		
 		activePiece = panel.selected();
 		//I HAVE THE SELECTED PIECE
+		
 	}
 	
 	public void updateScores(int score1, int score2) {
@@ -122,8 +124,10 @@ class Composite extends JComponent {
 		tray.updateSinglePiece(model);
 	}
 
+	
+	
 	class MyBrickusBoard extends JComponent {
-		private JLabel[][] myLabels;
+
 		int numCol;
 		int numRow;
 		int[][] mygrid;
@@ -132,7 +136,6 @@ class Composite extends JComponent {
 		Point coveredCell;
 		int cellWidth = 20;
 		
-		private JLabel coveredSquare;
 		
 		public MyBrickusBoard(BrickusModel model, MyMouseListener myListener) {
 	
@@ -151,11 +154,22 @@ class Composite extends JComponent {
 			mygrid[4][4] = 3;
 			mygrid[6][6] = 4;
 			
-			myLabels = new JLabel[numRow][numCol];
-			Dimension labelPrefSize = new Dimension(cellWidth, cellWidth);
-			setLayout(new GridLayout(numRow, numCol));
 	        MouseAdapter mouseHandler;
 	        mouseHandler = new MouseAdapter() {
+	        	@Override
+	        	public void mouseClicked(MouseEvent e){
+
+	                int width = getWidth();
+	                int height = getHeight();
+	
+	                int cellWidth = width / numCol;
+	                int cellHeight = height / numRow;
+	
+	                coveredx = e.getX() / cellWidth;
+	                coveredy = e.getY() / cellHeight;
+	                coveredCell = new Point(coveredx, coveredy);
+	                placePiece();
+	        	}
 	            @Override
 	            public void mouseMoved(MouseEvent e) {
 	                ///Point point = e.getPoint();
@@ -166,65 +180,74 @@ class Composite extends JComponent {
 	                int cellWidth = width / numCol;
 	                int cellHeight = height / numRow;
 	
-	                int coveredx = e.getX() / cellWidth;
-	                int coveredy = e.getY() / cellHeight;
+	                coveredx = e.getX() / cellWidth;
+	                coveredy = e.getY() / cellHeight;
 	                coveredCell = new Point(coveredx, coveredy);
 	
-	        		// i want to getsource and then find its x y
-	        		coveredSquare = (JLabel) e.getSource();
 	                repaint();
 	
 	            }
 	        };
-			for (int row = 0; row < myLabels.length; row++) {
-		         for (int col = 0; col < myLabels[row].length; col++) {
-		            JLabel myLabel = new JLabel();
-		            myLabel.setOpaque(true);
-		            myLabel.setBackground(Color.WHITE);
-		            myLabel.addMouseListener(myListener);
-		            myLabel.setPreferredSize(labelPrefSize);
-		            myLabel.setBorder(BorderFactory.createLineBorder(Color.black));
-		            myLabel.addMouseMotionListener(mouseHandler);
-		            add(myLabel);
-		            myLabels[row][col] = myLabel;
-		         }
-		      }
+	        addMouseMotionListener(mouseHandler);
+	        addMouseListener(mouseHandler);
 	
 	        
 		}
 		public void displayPiece(BrickusPiece piece){
 			
 		}
+		public void placePiece(){
+			//System.out.println("HI");
+			//System.out.println(model.getActivePlayer() + " "+ coveredx + " " + coveredy + " " + activePiece);
+			model.placePiece(model.getActivePlayer(), coveredx, coveredy, activePiece);
+			System.out.println("ewww");
+		}
 		public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            int width = this.getWidth();
+            int height = this.getHeight();
+            g.setColor(Color.BLACK);
+            g.fillRect(0,0,width, height);
+            int cellWidth = (width-numCol) / (numCol);//+1);
+            int cellHeight = (height -numRow)/ (numRow);//+1);
+
+
+            int xOffset = (width - (numCol * cellWidth)) / 4;
+            int yOffset = (height - (numRow * cellHeight)) / 4;
 			//System.out.println("xy: " + coveredx + " " + coveredy);
-			for (int row = 0; row < myLabels.length; row++) {
-		         for (int col = 0; col < myLabels[row].length; col++) {
+			for (int row = 0; row < numRow; row++) {
+		         for (int col = 0; col < numCol; col++) {
 		        	 if(mygrid[row][col] == 0)
 		        	 {
-		        		 myLabels[row][col].setBackground(Color.WHITE);
+		        		 g.setColor(Color.WHITE);
 		        	 }
 		        	 else if(mygrid[row][col] == 1)
 		        	 {
-		        		 myLabels[row][col].setBackground(player1color);
+		        		 g.setColor(player1color);
 		        	 }
 		        	 else if(mygrid[row][col] == 2)
 		        	 {
-		        		 myLabels[row][col].setBackground(player2color);
+		        		 g.setColor(player2color);
 		        	 }
 		        	 else if(mygrid[row][col] == 3)
 		        	 {
-		        		 myLabels[row][col].setBackground(player3color);
+		        		 g.setColor(player3color);
 		        	 }
 		        	 else if(mygrid[row][col] == 4)
 		        	 {
-		        		 myLabels[row][col].setBackground(player4color);
+		        		 g.setColor(player4color);
 		        	 }
-		        	 
+		        	 if(row == coveredy && col == coveredx)
+		        	 {
+		        		 //System.out.println(coveredx + "|" + coveredy);
+		        		 g.setColor(Color.RED);
+		        	 }
+		        	 g.fillRect(col*cellWidth+col+xOffset,row*cellHeight+row+yOffset,cellWidth, cellHeight);
 		         }
 		      }
 	        if (coveredCell != null) 
-	        {
-	        	coveredSquare.setBackground(Color.RED);
+	        {	//affect the coveredCell
+	        	//coveredSquare.setBackground(Color.RED);
 	        }
 		}
 		
@@ -235,14 +258,14 @@ class Composite extends JComponent {
 		BrickusPiece mypiece;
 		
 		public SinglePiece(BrickusModel model, BrickusPiece piece, MyMouseListener myListener) {
-			
+			mypiece = piece;
 			this.setLayout(new GridLayout(5, 5));
 			this.setBackground(Color.white);
 			this.addMouseListener(myListener);
 			int heightBuffer = calculateBuffer(piece.getHeight());
 			int widthBuffer = calculateBuffer(piece.getWidth());
-			System.out.println(piece.getWidth() + " " +  widthBuffer);
-			System.out.println(piece.getHeight() + " " + heightBuffer);
+			//System.out.println(piece.getWidth() + " " +  widthBuffer);
+			//System.out.println(piece.getHeight() + " " + heightBuffer);
 			
 			Player activePlayer = model.getActivePlayer();
 			Color playerColor;
@@ -277,7 +300,7 @@ class Composite extends JComponent {
 						else {
 							
 							JPanel brick = new JPanel();
-							System.out.println((w-widthBuffer) + " " + (h-heightBuffer));
+							//System.out.println((w-widthBuffer) + " " + (h-heightBuffer));
 							if(piece.isOccupied(w-widthBuffer, h-heightBuffer)) {
 								brick.setBackground(playerColor);
 								brick.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -317,8 +340,9 @@ class Composite extends JComponent {
 			return buffer;
 		}
 		public BrickusPiece selected(){
+			
 			//highlight myself
-			System.out.println("OUCH!");
+			//System.out.println(mypiece);
 			this.setBackground(Color.yellow);
 			return mypiece;
 		}
@@ -340,10 +364,11 @@ class Composite extends JComponent {
 		
 		public void updateSinglePiece(BrickusModel model, MyMouseListener myListener) {
 			
+			System.out.println(this);
 			this.removeAll();
-			
+			this.repaint();
+			this.setBackground(Color.white);
 			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
-				
 				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
 				this.add(newPiece);
 			}
@@ -419,14 +444,14 @@ class Composite extends JComponent {
 			
 			player1Score = new JLabel("<html><font color = 0000CC>Score: 0 </font>");
 			player2Score = new JLabel("<html><font color = CC0000>Score: 0 </font>");
-			//player3Score = new JLabel("<html><font color = 006600>Score: 0 </font>");
-			//player4Score = new JLabel("<html><font color = FF0066>Score: 0 </font>");
+			player3Score = new JLabel("<html><font color = 006600>Score: 0 </font>");
+			player4Score = new JLabel("<html><font color = FF0066>Score: 0 </font>");
 			
 			subpanelLeft.add(errorText);
 			subpanelRight.add(player1Score);
 			subpanelRight.add(player2Score);
-			//subpanelRight.add(player3Score);
-			//subpanelRight.add(player4Score);
+			subpanelRight.add(player3Score);
+			subpanelRight.add(player4Score);
 			
 			constraints.gridx = 0;
 			constraints.gridy = 0;
@@ -437,7 +462,7 @@ class Composite extends JComponent {
 			constraints.gridx = 5;
 			constraints.gridy = 0;
 			constraints.gridwidth = 2;
-			constraints.weightx = 1;
+			constraints.weightx = 0;
 			this.add(subpanelRight, constraints);
 		}
 		
@@ -471,10 +496,12 @@ class MyBrickusListener implements BrickusListener {
 	}
 
 	public void modelChanged(BrickusEvent event) {
-
+		System.out.println("ahppp");
 		if(!event.isGameOver()) {
+
 			composite.updateScores(composite.model.calculateScore(Player.PLAYER1), composite.model.calculateScore(Player.PLAYER2));
 			composite.updateSinglePiece(composite.model);
+			System.out.println("hppp");
 		}
 		else {
 			composite.tray.passButton.removeActionListener(composite.tray.buttonListener);

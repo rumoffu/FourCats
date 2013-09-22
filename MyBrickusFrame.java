@@ -2,10 +2,12 @@ package edu.jhu.cs.tyung1.oose;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+
 import javax.swing.*;
+
 import edu.jhu.cs.oose.fall2013.brickus.iface.*;
 
 //REVIVE: remove print statements
@@ -49,6 +51,7 @@ class Composite extends JComponent {
 	MyBrickusTray tray;
 	MyBrickusTracker tracker;
 	BrickusPiece activePiece;
+	BrickusModel model;
 	Color player1color;
 	Color player2color;
 	Color player3color;
@@ -59,6 +62,8 @@ class Composite extends JComponent {
 		player2color = Color.decode("#CC0000");
 		player3color = Color.decode("#006600");
 		player4color = Color.decode("#FF0066");
+		this.model = model;
+		
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.fill = GridBagConstraints.BOTH;
@@ -100,11 +105,24 @@ class Composite extends JComponent {
 		
 		tracker.newErrorMessage(message);
 	}
+	
 	public void pieceClicked(SinglePiece panel) {
-		   	activePiece = panel.selected();
-		   	//I HAVE THE SELECTED PIECE
-		   	
-		   }
+		
+		activePiece = panel.selected();
+		//I HAVE THE SELECTED PIECE
+	}
+	
+	public void updateScores(int score1, int score2) {
+		
+		tracker.newScores(score1, score2);
+	}
+	
+	public void updateSinglePiece(BrickusModel model) {
+		
+		tray.updateSinglePiece(model);
+	}
+
+	
 	
 	class MyBrickusBoard extends JComponent {
 		private JLabel[][] myLabels;
@@ -215,6 +233,7 @@ class Composite extends JComponent {
 	}
 	
 	class SinglePiece extends JPanel {
+		
 		BrickusPiece mypiece;
 		
 		public SinglePiece(BrickusModel model, BrickusPiece piece, MyMouseListener myListener) {
@@ -224,8 +243,8 @@ class Composite extends JComponent {
 			this.addMouseListener(myListener);
 			int heightBuffer = calculateBuffer(piece.getHeight());
 			int widthBuffer = calculateBuffer(piece.getWidth());
-			System.out.print(piece.getHeight() + " " + heightBuffer + " ");
-			System.out.println(piece.getWidth() + " " + widthBuffer + " ");
+			System.out.println(piece.getWidth() + " " +  widthBuffer);
+			System.out.println(piece.getHeight() + " " + heightBuffer);
 			
 			Player activePlayer = model.getActivePlayer();
 			Color playerColor;
@@ -260,6 +279,7 @@ class Composite extends JComponent {
 						else {
 							
 							JPanel brick = new JPanel();
+							System.out.println((w-widthBuffer) + " " + (h-heightBuffer));
 							if(piece.isOccupied(w-widthBuffer, h-heightBuffer)) {
 								brick.setBackground(playerColor);
 								brick.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -304,15 +324,25 @@ class Composite extends JComponent {
 			this.setBackground(Color.yellow);
 			return mypiece;
 		}
-		
 	}
 	
 	class pieceTray extends JPanel {
-		
+	
 		public pieceTray(BrickusModel model, MyMouseListener myListener) {
 			
 			this.setLayout(new GridLayout(3, 7));
 			this.setBorder(BorderFactory.createLineBorder(Color.black));
+			
+			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
+				
+				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
+				this.add(newPiece);
+			}
+		}
+		
+		public void updateSinglePiece(BrickusModel model, MyMouseListener myListener) {
+			
+			this.removeAll();
 			
 			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
 				
@@ -325,8 +355,13 @@ class Composite extends JComponent {
 	class MyBrickusTray extends JPanel {
 		
 		JButton passButton;
+		MyButtonListener buttonListener;
+		pieceTray tray;
+		MyMouseListener myListener;
 		
 		public MyBrickusTray(BrickusModel model, MyMouseListener myListener) {
+			
+			this.myListener = myListener;
 			
 			this.setLayout(new GridBagLayout());
 			this.setBorder(BorderFactory.createLineBorder(Color.black));		
@@ -340,21 +375,22 @@ class Composite extends JComponent {
 			constraints.gridwidth = 7;
 			constraints.weightx = 1;
 			this.add(pieceTray, constraints);
+			this.tray = pieceTray;
 			
 			passButton = new JButton("Pass");
-			passButton.addActionListener(new ActionListener() {
-	
-				public void actionPerformed(ActionEvent arg0) {
-				
-					
-				}
-				
-			});
+			MyButtonListener buttonListener = new MyButtonListener(model);
+			passButton.addActionListener(buttonListener);
+			this.buttonListener = buttonListener;
 			constraints.gridx = 7;
 			constraints.gridy = 0;
 			constraints.gridwidth = 1;
 			constraints.weightx = 0;
 			this.add(passButton, constraints);
+		}
+		
+		public void updateSinglePiece(BrickusModel model) {
+			
+			tray.updateSinglePiece(model, myListener);
 		}
 	}
 	
@@ -411,8 +447,16 @@ class Composite extends JComponent {
 			
 			errorText.setText(message);
 		}
+		
+		public void newScores(int score1, int score2) {
+			
+			player1Score.setText("<html><font color = 0000CC>Score: " + score1 + "</font>");
+			player2Score.setText("<html><font color = CC0000>Score: " + score2 + "</font>");
+			//REVIVE: add additional Players
+			//player3Score.setText("<html><font color = 006600>Score: " + 0 + "</font>");
+			//player4Score.setText("<html><font color = FF0066>Score: " + 0 + "</font>");
+		}
 	}
-
 }
 class MyBrickusListener implements BrickusListener {
 
@@ -428,7 +472,38 @@ class MyBrickusListener implements BrickusListener {
 		composite.updateErrorMessage(event.getMessage());
 	}
 
-	public void modelChanged(BrickusEvent arg0) {
+	public void modelChanged(BrickusEvent event) {
 
+		if(!event.isGameOver()) {
+			composite.updateScores(composite.model.calculateScore(Player.PLAYER1), composite.model.calculateScore(Player.PLAYER2));
+			composite.updateSinglePiece(composite.model);
+		}
+		else {
+			composite.tray.passButton.removeActionListener(composite.tray.buttonListener);
+			if(composite.model.calculateScore(Player.PLAYER1) > composite.model.calculateScore(Player.PLAYER2)) {
+				composite.updateErrorMessage("Game over. Player 1 won with " + composite.model.calculateScore(Player.PLAYER1) + " points.");
+			}
+			else if(composite.model.calculateScore(Player.PLAYER1) < composite.model.calculateScore(Player.PLAYER2)) {
+				composite.updateErrorMessage("Game over. Player 2 won with " + composite.model.calculateScore(Player.PLAYER2) + " points.");
+			}
+			else {
+				composite.updateErrorMessage("Game over. Players tied.");
+			}
+		}
+	}
+}
+
+class MyButtonListener implements java.awt.event.ActionListener {
+
+	public BrickusModel model;
+	
+	public MyButtonListener(BrickusModel model) {
+		
+		this.model = model;
+	}
+	
+	public void actionPerformed(ActionEvent event) {
+	
+		model.pass(model.getActivePlayer());
 	}
 }

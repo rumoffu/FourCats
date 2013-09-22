@@ -2,16 +2,12 @@ package edu.jhu.cs.tyung1.oose;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.JLabel;
-import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusPiece;
-import edu.jhu.cs.tyung1.oose.FullComponent.SinglePiece;
-import edu.jhu.cs.tyung1.oose.MyBrickusFrame;
-import edu.jhu.cs.tyung1.*;
+import edu.jhu.cs.tyung1.oose.SinglePiece;
 
 public class MyMouseListener extends MouseAdapter {
-	private FullComponent myfull;
+	private Composite myfull;
 
-	   public MyMouseListener(FullComponent full) {
+	   public MyMouseListener(Composite full) {
 		      this.myfull = full;
 		   }
 

@@ -245,7 +245,7 @@ class Composite extends JComponent {
 	        addMouseMotionListener(mouseHandler);
 	        addMouseListener(mouseHandler);
 	        this.addMouseListener(myListener);
-	
+	        this.addMouseWheelListener(myListener);
 	        
 		}
 		public void pieceSelected(){
@@ -425,6 +425,7 @@ class Composite extends JComponent {
 			this.setLayout(new GridLayout(5, 5));
 			this.setBackground(Color.white);
 			this.addMouseListener(myListener);
+			this.addMouseWheelListener(myListener);
 			int heightBuffer = calculateBuffer(piece.getHeight());
 			int widthBuffer = calculateBuffer(piece.getWidth());
 			

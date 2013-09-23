@@ -56,8 +56,6 @@ class Composite extends JComponent {
 	Color player1colorhalf;
 	Color player2colorhalf;
 	boolean pieceSelected;
-	//Color player3color;
-	//Color player4color;
 	int[][] thepiece;
 	
 	public Composite(BrickusModel model) {
@@ -65,8 +63,6 @@ class Composite extends JComponent {
 		player2color = Color.decode("#CC0000");
 		player1colorhalf = new Color(0,0,204,120);
 		player2colorhalf = new Color(204,0,0,120);
-		//player3color = Color.decode("#006600");
-		//player4color = Color.decode("#FF0066");
 		
 		this.model = model;
 		
@@ -137,12 +133,14 @@ class Composite extends JComponent {
 		
 		tray.updateSinglePiece(model);
 		board.repaint();
+		tray.revalidate();
 	}
 	
 	public void rightClick(){
 		if(pieceSelected){
 			activePiece.flipHorizontally();
 			updateThePiece();
+			repaint();
 		}
 	}
 
@@ -166,7 +164,7 @@ class Composite extends JComponent {
 			updateThePiece();
 		}
 	}
-	public void updateThePiece(){
+	public void updateThePiece() {
 		thepiece = new int[activePiece.getHeight()][activePiece.getWidth()];
 		for( int y = 0; y < activePiece.getHeight(); y++){
 			for(int x = 0; x < activePiece.getWidth(); x++){
@@ -176,8 +174,8 @@ class Composite extends JComponent {
 				}
 			}
 		}
+		
 	}
-
 	
 	class MyBrickusBoard extends JComponent {
 
@@ -329,13 +327,12 @@ class Composite extends JComponent {
 			        		 if(pieceSelected)
 			        		 for(int y = 0; y < activePiece.getHeight(); y++){
 			        			 for(int x = 0; x < activePiece.getWidth(); x++){
-			        				 if(thepiece[y][x] == 1){
+			        				if(thepiece[y][x] == 1){
 			        					 if(col+x < model.getWidth() && row + y < model.getHeight()){
 			        						 g.setColor(shadow);
 			        						 g.fillRect((col+x)*cellWidth+(col+x)+xOffset,(row+y)*cellHeight+(row+y)+yOffset,cellWidth, cellHeight);
 			        						 
 			        					 }
-			        					 
 			        				 }
 			        			 }
 			        		 }
@@ -390,8 +387,11 @@ class Composite extends JComponent {
 		}
 	}
 	class pieceTray extends JPanel {
+		
 		MyMouseListener myListener;
+		
 		public pieceTray(BrickusModel model, MyMouseListener myListener) {
+			
 			this.myListener = myListener;
 			this.setLayout(new GridLayout(3, 7));
 			this.setBorder(BorderFactory.createLineBorder(Color.black));
@@ -407,13 +407,12 @@ class Composite extends JComponent {
 			
 			this.removeAll();
 			this.repaint();
-			this.setBackground(Color.white);
+			//this.setBackground(Color.white);
 			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
-				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
+				SinglePiece newPiece = new SinglePiece(model, piece, myListener); // REVIVE: disappearing tray
 				this.add(newPiece);
 			}
 		}
-		
 	}
 	
 	class SinglePiece extends JPanel {
@@ -436,7 +435,7 @@ class Composite extends JComponent {
 			}
 			else {
 				playerColor = player2color;
-			} //REVIVE: put in all 4 Players
+			}
 			
 			for(int h=0; h<5; h++) {
 				
@@ -529,22 +528,13 @@ class Composite extends JComponent {
 			JPanel subpanelRight = new JPanel(new FlowLayout(FlowLayout.TRAILING));
 			
 			errorText = new JLabel();
-			/*errorText.setText(errorText.getText() + "<font color=0000CC>F</font>");
-			errorText.setText(errorText.getText() + "<font color=CC0000>o</font>");
-			errorText.setText(errorText.getText() + "<font color=006600>u</font>");
-			errorText.setText(errorText.getText() + "<font color=FF0066>r</font");
-			errorText.setText(errorText.getText() + "<font color=000000>Cats! =^.^=");*/
 			
 			player1Score = new JLabel("<html><font color = 0000CC>Score: 0 </font>");
 			player2Score = new JLabel("<html><font color = CC0000>Score: 0 </font>");
-			//player3Score = new JLabel("<html><font color = 006600>Score: 0 </font>");
-			//player4Score = new JLabel("<html><font color = FF0066>Score: 0 </font>");
 			
 			subpanelLeft.add(errorText);
 			subpanelRight.add(player1Score);
 			subpanelRight.add(player2Score);
-			//subpanelRight.add(player3Score);
-			//subpanelRight.add(player4Score);
 			
 			constraints.gridx = 0;
 			constraints.gridy = 0;

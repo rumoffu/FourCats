@@ -53,15 +53,15 @@ class Composite extends JComponent {
 	BrickusModel model;
 	Color player1color;
 	Color player2color;
-	Color player3color;
-	Color player4color;
+	//Color player3color;
+	//Color player4color;
 	int[][] thepiece;
 	
 	public Composite(BrickusModel model) {
 		player1color = Color.decode("#0000CC");
 		player2color = Color.decode("#CC0000");
-		player3color = Color.decode("#006600");
-		player4color = Color.decode("#FF0066");
+		//player3color = Color.decode("#006600");
+		//player4color = Color.decode("#FF0066");
 		
 		this.model = model;
 		
@@ -206,7 +206,27 @@ class Composite extends JComponent {
 			pieceSelected = true;
 		}
 		public void placePiece(){
-			model.placePiece(model.getActivePlayer(), coveredx, coveredy, activePiece);
+			Player placingPlayer = model.getActivePlayer();
+			int playerNum = 0;
+			if(placingPlayer == Player.PLAYER1){
+				playerNum = 1;
+			}
+			else if(placingPlayer == Player.PLAYER2){
+				playerNum = 2;
+			}
+			model.placePiece(placingPlayer, coveredx, coveredy, activePiece);
+			if(placingPlayer != model.getActivePlayer())
+			{ //successful placement so update model
+				for(int row = 0; row < thepiece.length; row++){
+					for(int col = 0; col < thepiece[0].length; col++){
+						if(thepiece[row][col] == 1){
+							mygrid[coveredy+row][coveredx+col] = playerNum; 		
+						}
+					}
+				}
+				activePiece = null;
+				pieceSelected = false;
+			}
 		}
 		public void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -234,18 +254,19 @@ class Composite extends JComponent {
 		        	 {
 		        		 g.setColor(player2color);
 		        	 }
-		        	 else if(mygrid[row][col] == 3)
+		        	 /*else if(mygrid[row][col] == 3)
 		        	 {
 		        		 g.setColor(player3color);
 		        	 }
 		        	 else if(mygrid[row][col] == 4)
 		        	 {
 		        		 g.setColor(player4color);
-		        	 }
+		        	 }*/
 
 		        	 g.fillRect(col*cellWidth+col+xOffset,row*cellHeight+row+yOffset,cellWidth, cellHeight);
 		         }
 		      }
+			System.out.println(model.getActivePlayer());
 	        if (coveredCell != null) 
 	        {	//affect the coveredCell
 				for (int row = 0; row < numRow; row++) {

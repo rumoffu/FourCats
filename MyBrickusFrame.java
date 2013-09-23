@@ -199,11 +199,7 @@ class Composite extends JComponent {
 					mygrid[y][x] = 0;
 				}
 			}
-			mygrid[0][0] = 1;
-			mygrid[2][2] = 2;
-			mygrid[4][4] = 3;
-			mygrid[6][6] = 4;
-			
+
 	        MouseAdapter mouseHandler;
 	        mouseHandler = new MouseAdapter() {
 	        	@Override
@@ -404,13 +400,20 @@ class Composite extends JComponent {
 		}
 		
 		public void updateSinglePiece(BrickusModel model, MyMouseListener myListener) {
-			
+			int count = 0;
 			this.removeAll();
 			this.repaint();
 			//this.setBackground(Color.white);
 			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
 				SinglePiece newPiece = new SinglePiece(model, piece, myListener); // REVIVE: disappearing tray
 				this.add(newPiece);
+				count++;
+			}
+			while(count < 21){
+				BrickusPiece temp = null;
+				SinglePiece newPiece = new SinglePiece(model, temp, myListener); // REVIVE: disappearing tray
+				this.add(newPiece);
+				count++;
 			}
 		}
 	}
@@ -425,6 +428,7 @@ class Composite extends JComponent {
 			this.setBackground(Color.white);
 			this.addMouseListener(myListener);
 			this.addMouseWheelListener(myListener);
+			if(piece == null) return;
 			int heightBuffer = calculateBuffer(piece.getHeight());
 			int widthBuffer = calculateBuffer(piece.getWidth());
 			

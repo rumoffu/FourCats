@@ -2,9 +2,12 @@ package edu.jhu.cs.tyung1.oose;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import edu.jhu.cs.tyung1.oose.SinglePiece;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 
-public class MyMouseListener extends MouseAdapter {
+import edu.jhu.cs.tyung1.oose.Composite.SinglePiece;
+
+public class MyMouseListener extends MouseAdapter implements MouseWheelListener{
 	private Composite myfull;
 
 	   public MyMouseListener(Composite full) {
@@ -15,11 +18,25 @@ public class MyMouseListener extends MouseAdapter {
    @Override
    public void mousePressed(MouseEvent e) {
       if (e.getButton() == MouseEvent.BUTTON1) {
-    	  myfull.pieceClicked((SinglePiece)e.getSource());
+    	  if(e.getSource() instanceof SinglePiece)
+    	  {
+    		  myfull.pieceClicked((SinglePiece)e.getSource());
+    	  }
       } 
       else if (e.isShiftDown() && e.getButton() == MouseEvent.BUTTON3) {
-         ///mypiece.flipHorizontally();
-         //call myfull function
+    	  myfull.shiftRightClick();
       }
+      else if(!e.isShiftDown() && e.getButton() == MouseEvent.BUTTON3){
+    	  myfull.rightClick();
+      }
+   }
+   @Override
+   public void mouseWheelMoved(MouseWheelEvent w){
+	   if(w.getWheelRotation() < 0){
+		   myfull.scrollUpWheel();   
+	   }
+	   else{ //down
+		   myfull.scrollDownWheel();
+	   }
    }
 }

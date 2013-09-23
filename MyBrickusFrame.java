@@ -55,7 +55,7 @@ class Composite extends JComponent {
 	Color player2color;
 	Color player1colorhalf;
 	Color player2colorhalf;
-	
+	boolean pieceSelected;
 	//Color player3color;
 	//Color player4color;
 	int[][] thepiece;
@@ -137,15 +137,44 @@ class Composite extends JComponent {
 		
 		tray.updateSinglePiece(model);
 	}
-
 	
+	public void rightClick(){
+		if(pieceSelected){
+			activePiece.flipHorizontally();
+			repaint();
+		}
+	}
+
+	public void shiftRightClick(){
+		if(pieceSelected){
+			activePiece.flipVertically();
+			repaint();
+		}
+	}
+	
+	public void scrollUpWheel(){
+		if(pieceSelected){
+			activePiece.rotateCounterClockwise();
+			repaint();
+		}
+	}
+	
+	public void scrollDownWheel(){
+		if(pieceSelected){
+			activePiece.rotateClockwise();
+			repaint();
+		}
+	}
+	public void paintComponent(Graphics g) {
+		board.repaint();
+		tray.repaint();
+	}
 	
 	class MyBrickusBoard extends JComponent {
 
 		int numCol;
 		int numRow;
 		int[][] mygrid;
-		boolean pieceSelected;
 		int coveredx, coveredy; // the indices of the cell over which the mouse is currently.
 		Point coveredCell;
 		int cellWidth = 20;
@@ -172,17 +201,19 @@ class Composite extends JComponent {
 	        mouseHandler = new MouseAdapter() {
 	        	@Override
 	        	public void mouseClicked(MouseEvent e){
-
-	                int width = getWidth();
-	                int height = getHeight();
-	
-	                int cellWidth = width / numCol;
-	                int cellHeight = height / numRow;
-	
-	                coveredx = e.getX() / cellWidth;
-	                coveredy = e.getY() / cellHeight;
-	                coveredCell = new Point(coveredx, coveredy);
-	                placePiece();
+	        		if(e.getButton() == MouseEvent.BUTTON1)
+	        		{
+		                int width = getWidth();
+		                int height = getHeight();
+		
+		                int cellWidth = width / numCol;
+		                int cellHeight = height / numRow;
+		
+		                coveredx = e.getX() / cellWidth;
+		                coveredy = e.getY() / cellHeight;
+		                coveredCell = new Point(coveredx, coveredy);
+		                placePiece();
+	        		}
 	        	}
 	            @Override
 	            public void mouseMoved(MouseEvent e) {
@@ -204,6 +235,7 @@ class Composite extends JComponent {
 	        };
 	        addMouseMotionListener(mouseHandler);
 	        addMouseListener(mouseHandler);
+	        this.addMouseListener(myListener);
 	
 	        
 		}
@@ -271,7 +303,6 @@ class Composite extends JComponent {
 		        	 g.fillRect(col*cellWidth+col+xOffset,row*cellHeight+row+yOffset,cellWidth, cellHeight);
 		         }
 		      }
-			System.out.println(model.getActivePlayer());
 	        if (coveredCell != null) 
 	        {	//affect the coveredCell
 	        	Color shadow = Color.WHITE;
@@ -305,6 +336,86 @@ class Composite extends JComponent {
 	        }
 		}
 		
+	}
+
+	
+	class MyBrickusTray extends JPanel {
+		
+		JButton passButton;
+		MyButtonListener buttonListener;
+		pieceTray tray;
+		MyMouseListener myListener;
+		
+		public MyBrickusTray(BrickusModel model, MyMouseListener myListener) {
+			
+			this.myListener = myListener;
+			
+			this.setLayout(new GridBagLayout());
+			this.setBorder(BorderFactory.createLineBorder(Color.black));		
+			GridBagConstraints constraints = new GridBagConstraints();
+			constraints.fill = GridBagConstraints.BOTH;
+			
+			pieceTray pieceTray = new pieceTray(model, myListener);
+			pieceTray.setBorder(BorderFactory.createLineBorder(Color.black));
+			constraints.gridx = 0;
+			constraints.gridy = 0;
+			constraints.gridwidth = 7;
+			constraints.weightx = 1;
+			this.add(pieceTray, constraints);
+			this.tray = pieceTray;
+			
+			passButton = new JButton("Pass");
+			MyButtonListener buttonListener = new MyButtonListener(model);
+			passButton.addActionListener(buttonListener);
+			this.buttonListener = buttonListener;
+			constraints.gridx = 7;
+			constraints.gridy = 0;
+			constraints.gridwidth = 1;
+			constraints.weightx = 0;
+			this.add(passButton, constraints);
+		}
+		public void paintComponent(Graphics g) {
+			tray.repaint();
+		}
+		
+		public void updateSinglePiece(BrickusModel model) {
+			
+			tray.updateSinglePiece(model, myListener);
+		}
+	}
+	class pieceTray extends JPanel {
+		MyMouseListener myListener;
+		public pieceTray(BrickusModel model, MyMouseListener myListener) {
+			this.myListener = myListener;
+			this.setLayout(new GridLayout(3, 7));
+			this.setBorder(BorderFactory.createLineBorder(Color.black));
+			
+			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
+				
+				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
+				this.add(newPiece);
+			}
+		}
+		
+		public void updateSinglePiece(BrickusModel model, MyMouseListener myListener) {
+			
+			this.removeAll();
+			///this.repaint();
+			this.setBackground(Color.white);
+			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
+				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
+				this.add(newPiece);
+			}
+		}
+		
+		public void paintComponent(Graphics g) {
+			this.removeAll();
+			this.setBackground(Color.white);
+			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
+				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
+				this.add(newPiece);
+			}
+		}
 	}
 	
 	class SinglePiece extends JPanel {
@@ -396,76 +507,10 @@ class Composite extends JComponent {
 			this.setBackground(Color.yellow);
 			return mypiece;
 		}
-	}
-	
-	class pieceTray extends JPanel {
-	
-		public pieceTray(BrickusModel model, MyMouseListener myListener) {
+		public void paintComponent(Graphics g) {
 			
-			this.setLayout(new GridLayout(3, 7));
-			this.setBorder(BorderFactory.createLineBorder(Color.black));
-			
-			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
-				
-				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
-				this.add(newPiece);
-			}
-		}
-		
-		public void updateSinglePiece(BrickusModel model, MyMouseListener myListener) {
-			
-			this.removeAll();
-			this.repaint();
-			this.setBackground(Color.white);
-			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
-				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
-				this.add(newPiece);
-			}
 		}
 	}
-	
-	class MyBrickusTray extends JPanel {
-		
-		JButton passButton;
-		MyButtonListener buttonListener;
-		pieceTray tray;
-		MyMouseListener myListener;
-		
-		public MyBrickusTray(BrickusModel model, MyMouseListener myListener) {
-			
-			this.myListener = myListener;
-			
-			this.setLayout(new GridBagLayout());
-			this.setBorder(BorderFactory.createLineBorder(Color.black));		
-			GridBagConstraints constraints = new GridBagConstraints();
-			constraints.fill = GridBagConstraints.BOTH;
-			
-			pieceTray pieceTray = new pieceTray(model, myListener);
-			pieceTray.setBorder(BorderFactory.createLineBorder(Color.black));
-			constraints.gridx = 0;
-			constraints.gridy = 0;
-			constraints.gridwidth = 7;
-			constraints.weightx = 1;
-			this.add(pieceTray, constraints);
-			this.tray = pieceTray;
-			
-			passButton = new JButton("Pass");
-			MyButtonListener buttonListener = new MyButtonListener(model);
-			passButton.addActionListener(buttonListener);
-			this.buttonListener = buttonListener;
-			constraints.gridx = 7;
-			constraints.gridy = 0;
-			constraints.gridwidth = 1;
-			constraints.weightx = 0;
-			this.add(passButton, constraints);
-		}
-		
-		public void updateSinglePiece(BrickusModel model) {
-			
-			tray.updateSinglePiece(model, myListener);
-		}
-	}
-	
 	class MyBrickusTracker extends JPanel {
 		
 		JLabel errorText;

@@ -136,39 +136,48 @@ class Composite extends JComponent {
 	public void updateSinglePiece(BrickusModel model) {
 		
 		tray.updateSinglePiece(model);
+		board.repaint();
 	}
 	
 	public void rightClick(){
 		if(pieceSelected){
 			activePiece.flipHorizontally();
-			repaint();
+			updateThePiece();
 		}
 	}
 
 	public void shiftRightClick(){
 		if(pieceSelected){
 			activePiece.flipVertically();
-			repaint();
+			updateThePiece();
 		}
 	}
 	
 	public void scrollUpWheel(){
 		if(pieceSelected){
 			activePiece.rotateCounterClockwise();
-			repaint();
+			updateThePiece();
 		}
 	}
 	
 	public void scrollDownWheel(){
 		if(pieceSelected){
 			activePiece.rotateClockwise();
-			repaint();
+			updateThePiece();
 		}
 	}
-	public void paintComponent(Graphics g) {
-		board.repaint();
-		tray.repaint();
+	public void updateThePiece(){
+		thepiece = new int[activePiece.getHeight()][activePiece.getWidth()];
+		for( int y = 0; y < activePiece.getHeight(); y++){
+			for(int x = 0; x < activePiece.getWidth(); x++){
+				if(activePiece.isOccupied(x, y))
+				{
+					thepiece[y][x] = 1;
+				}
+			}
+		}
 	}
+
 	
 	class MyBrickusBoard extends JComponent {
 
@@ -374,10 +383,6 @@ class Composite extends JComponent {
 			constraints.weightx = 0;
 			this.add(passButton, constraints);
 		}
-		public void paintComponent(Graphics g) {
-			this.tray.repaint();
-			//this.tray.updateSinglePiece(model, myListener);
-		}
 		
 		public void updateSinglePiece(BrickusModel model) {
 			
@@ -409,14 +414,6 @@ class Composite extends JComponent {
 			}
 		}
 		
-/*		public void paintComponent(Graphics g) {
-			this.removeAll();
-			this.setBackground(Color.white);
-			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
-				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
-				this.add(newPiece);
-			}
-		}*/
 	}
 	
 	class SinglePiece extends JPanel {

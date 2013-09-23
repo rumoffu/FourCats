@@ -375,12 +375,13 @@ class Composite extends JComponent {
 			this.add(passButton, constraints);
 		}
 		public void paintComponent(Graphics g) {
-			tray.repaint();
+			this.tray.repaint();
+			//this.tray.updateSinglePiece(model, myListener);
 		}
 		
 		public void updateSinglePiece(BrickusModel model) {
 			
-			tray.updateSinglePiece(model, myListener);
+			this.tray.updateSinglePiece(model, myListener);
 		}
 	}
 	class pieceTray extends JPanel {
@@ -400,7 +401,7 @@ class Composite extends JComponent {
 		public void updateSinglePiece(BrickusModel model, MyMouseListener myListener) {
 			
 			this.removeAll();
-			///this.repaint();
+			this.repaint();
 			this.setBackground(Color.white);
 			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
 				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
@@ -408,14 +409,14 @@ class Composite extends JComponent {
 			}
 		}
 		
-		public void paintComponent(Graphics g) {
+/*		public void paintComponent(Graphics g) {
 			this.removeAll();
 			this.setBackground(Color.white);
 			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
 				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
 				this.add(newPiece);
 			}
-		}
+		}*/
 	}
 	
 	class SinglePiece extends JPanel {
@@ -507,9 +508,9 @@ class Composite extends JComponent {
 			this.setBackground(Color.yellow);
 			return mypiece;
 		}
-		public void paintComponent(Graphics g) {
-			
-		}
+/*		public void paintComponent(Graphics g) {
+			;
+		}*/
 	}
 	class MyBrickusTracker extends JPanel {
 		

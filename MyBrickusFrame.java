@@ -53,6 +53,9 @@ class Composite extends JComponent {
 	BrickusModel model;
 	Color player1color;
 	Color player2color;
+	Color player1colorhalf;
+	Color player2colorhalf;
+	
 	//Color player3color;
 	//Color player4color;
 	int[][] thepiece;
@@ -60,6 +63,8 @@ class Composite extends JComponent {
 	public Composite(BrickusModel model) {
 		player1color = Color.decode("#0000CC");
 		player2color = Color.decode("#CC0000");
+		player1colorhalf = new Color(0,0,204,120);
+		player2colorhalf = new Color(204,0,0,120);
 		//player3color = Color.decode("#006600");
 		//player4color = Color.decode("#FF0066");
 		
@@ -269,17 +274,24 @@ class Composite extends JComponent {
 			System.out.println(model.getActivePlayer());
 	        if (coveredCell != null) 
 	        {	//affect the coveredCell
+	        	Color shadow = Color.WHITE;
 				for (int row = 0; row < numRow; row++) {
 			         for (int col = 0; col < numCol; col++) {
 			        	 if(row == coveredy && col == coveredx )
 			        	 {
-			        		 g.setColor(Color.RED);
+			        		 if(model.getActivePlayer() == Player.PLAYER1){// && mygrid[row][col] == 0){
+			        			 shadow = player1colorhalf;
+			        		 }
+			        		 else if(model.getActivePlayer() == Player.PLAYER2){// && mygrid[row][col] == 0){
+			        			 shadow = player2colorhalf;
+			        		 }
+
 			        		 if(pieceSelected)
 			        		 for(int y = 0; y < activePiece.getHeight(); y++){
 			        			 for(int x = 0; x < activePiece.getWidth(); x++){
 			        				 if(thepiece[y][x] == 1){
 			        					 if(col+x < model.getWidth() && row + y < model.getHeight()){
-			        						 g.setColor(Color.RED);
+			        						 g.setColor(shadow);
 			        						 g.fillRect((col+x)*cellWidth+(col+x)+xOffset,(row+y)*cellHeight+(row+y)+yOffset,cellWidth, cellHeight);
 			        						 
 			        					 }
@@ -310,10 +322,10 @@ class Composite extends JComponent {
 			Player activePlayer = model.getActivePlayer();
 			Color playerColor;
 			if(activePlayer == Player.PLAYER1) {
-				playerColor = Color.red;
+				playerColor = player1color;
 			}
 			else {
-				playerColor = Color.blue;
+				playerColor = player2color;
 			} //REVIVE: put in all 4 Players
 			
 			for(int h=0; h<5; h++) {

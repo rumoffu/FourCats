@@ -416,21 +416,28 @@ class Composite extends JComponent {
 				count++;
 			}
 		}
+		
 	}
 	
 	class SinglePiece extends JPanel {
 		
 		BrickusPiece mypiece;
+		int numRow;
+		int numCol;
 		
 		public SinglePiece(BrickusModel model, BrickusPiece piece, MyMouseListener myListener) {
+			numRow = 5;
+			numCol = 5;
 			mypiece = piece;
-			this.setLayout(new GridLayout(5, 5));
+			//this.setLayout(new GridLayout(5, 5));
 			this.setBackground(Color.white);
 			this.addMouseListener(myListener);
 			this.addMouseWheelListener(myListener);
 			if(piece == null) return;
-			int heightBuffer = calculateBuffer(piece.getHeight());
-			int widthBuffer = calculateBuffer(piece.getWidth());
+			//int heightBuffer = calculateBuffer(piece.getHeight());
+			//int widthBuffer = calculateBuffer(piece.getWidth());
+			int heightBuffer = numRow-piece.getHeight() / 2;
+			int widthBuffer = numCol-piece.getWidth() / 2;
 			
 			Player activePlayer = model.getActivePlayer();
 			Color playerColor;
@@ -479,21 +486,90 @@ class Composite extends JComponent {
 			}
 		}
 		
+		public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            int width = this.getWidth();
+            int height = this.getHeight();
+            g.setColor(Color.BLACK);
+            g.fillRect(0,0,width, height);
+            int cellWidth = (width-numCol) / (numCol);//+1);
+            int cellHeight = (height -numRow)/ (numRow);//+1);
+            
+
+            int xOffset = (width - (numCol * cellWidth)) / 4;
+            int yOffset = (height - (numRow * cellHeight)) / 4;
+			for (int row = 0; row < numRow; row++) {
+		         for (int col = 0; col < numCol; col++) {
+		        	 if(mygrid[row][col] == 0)
+		        	 {
+		        		 g.setColor(Color.WHITE);
+		        	 }
+		        	 else if(mygrid[row][col] == 1)
+		        	 {
+		        		 g.setColor(player1color);
+		        	 }
+		        	 else if(mygrid[row][col] == 2)
+		        	 {
+		        		 g.setColor(player2color);
+		        	 }
+		        	 /*else if(mygrid[row][col] == 3)
+		        	 {
+		        		 g.setColor(player3color);
+		        	 }
+		        	 else if(mygrid[row][col] == 4)
+		        	 {
+		        		 g.setColor(player4color);
+		        	 }*/
+
+		        	 g.fillRect(col*cellWidth+col+xOffset,row*cellHeight+row+yOffset,cellWidth, cellHeight);
+		         }
+		      }
+	        if (coveredCell != null) 
+	        {	//affect the coveredCell
+	        	Color shadow = Color.WHITE;
+				for (int row = 0; row < numRow; row++) {
+			         for (int col = 0; col < numCol; col++) {
+			        	 if(row == coveredy && col == coveredx )
+			        	 {
+			        		 if(model.getActivePlayer() == Player.PLAYER1){// && mygrid[row][col] == 0){
+			        			 shadow = player1colorhalf;
+			        		 }
+			        		 else if(model.getActivePlayer() == Player.PLAYER2){// && mygrid[row][col] == 0){
+			        			 shadow = player2colorhalf;
+			        		 }
+
+			        		 if(pieceSelected)
+			        		 for(int y = 0; y < activePiece.getHeight(); y++){
+			        			 for(int x = 0; x < activePiece.getWidth(); x++){
+			        				if(thepiece[y][x] == 1){
+			        					 if(col+x < model.getWidth() && row + y < model.getHeight()){
+			        						 g.setColor(shadow);
+			        						 g.fillRect((col+x)*cellWidth+(col+x)+xOffset,(row+y)*cellHeight+(row+y)+yOffset,cellWidth, cellHeight);
+			        						 
+			        					 }
+			        				 }
+			        			 }
+			        		 }
+			        	 }
+			         }
+				}
+	        }
+		}
 		public int calculateBuffer(int pieceDimension) {
 			
 			int buffer = 0;
 			
 			switch(pieceDimension) {
-			case 1:
+			case 1: //5-1 / 2 = 2
 				buffer = 2;
 				break;
-			case 2:
+			case 2: //5 - 2 / 2 = 2
 				buffer = 1;
 				break;
-			case 3:
+			case 3: // 5 - 3 / 2 = 1
 				buffer = 1;
 				break;
-			case 4:
+			case 4: // 5- 4 / 2 = 0
 				buffer = 0;
 				break;
 			case 5:

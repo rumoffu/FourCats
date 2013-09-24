@@ -158,6 +158,7 @@ class Composite extends JComponent {
 		if(pieceSelected){
 			activepiece.mypiece.flipVertically();
 			updateThePiece();
+			repaint();
 		}
 	}
 	
@@ -165,6 +166,7 @@ class Composite extends JComponent {
 		if(pieceSelected){
 			activepiece.mypiece.rotateCounterClockwise();
 			updateThePiece();
+			repaint();
 		}
 	}
 	
@@ -172,6 +174,7 @@ class Composite extends JComponent {
 		if(pieceSelected){
 			activepiece.mypiece.rotateClockwise();
 			updateThePiece();
+			repaint();
 		}
 	}
 	public void updateThePiece() {
@@ -455,8 +458,8 @@ class Composite extends JComponent {
 			if(piece == null) return;
 			//int heightBuffer = calculateBuffer(piece.getHeight());
 			//int widthBuffer = calculateBuffer(piece.getWidth());
-			heightBuffer = (numRow-piece.getHeight()) / 2;
-			widthBuffer = (numCol-piece.getWidth()) / 2;
+			heightBuffer = (numRow-mypiece.getHeight()) / 2;
+			widthBuffer = (numCol-mypiece.getWidth()) / 2;
 			
 			Player activePlayer = model.getActivePlayer();
 			if(activePlayer == Player.PLAYER1) {
@@ -506,6 +509,8 @@ class Composite extends JComponent {
 		
 		public void paintComponent(Graphics g) {
 			if(mypiece == null) return;
+			heightBuffer = (numRow-mypiece.getHeight()) / 2;
+			widthBuffer = (numCol-mypiece.getWidth()) / 2;
             super.paintComponent(g);
             int width = this.getWidth();
             int height = this.getHeight();
@@ -663,8 +668,10 @@ class MyBrickusListener implements BrickusListener {
 	public void modelChanged(BrickusEvent event) {
 		
 		if(!event.isGameOver()) {
-			composite.updateScores(composite.model.calculateScore(Player.PLAYER1), composite.model.calculateScore(Player.PLAYER2));
-			composite.updateSinglePiece(composite.model);
+			if(event.isPlayerChanged()){
+				composite.updateScores(composite.model.calculateScore(Player.PLAYER1), composite.model.calculateScore(Player.PLAYER2));
+				composite.updateSinglePiece(composite.model);
+			}
 		}
 		else {
 			composite.tray.passButton.removeActionListener(composite.tray.buttonListener);

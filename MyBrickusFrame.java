@@ -198,12 +198,14 @@ class Composite extends JComponent {
 		int coveredx, coveredy; // the indices of the cell over which the mouse is currently.
 		Point coveredCell;
 		int cellWidth = 20;
-		
+		MouseAdapter mouseHandler;
+		MyMouseListener myListener;
 		
 		public MyBrickusBoard(BrickusModel model, MyMouseListener myListener) {
 			pieceSelected = false;
 			numCol = model.getWidth();
 			numRow = model.getHeight();
+			this.myListener = myListener;
 			mygrid = new int[numRow][numCol];
 			for(int y = 0; y < numRow; y++)
 			{
@@ -213,7 +215,7 @@ class Composite extends JComponent {
 				}
 			}
 
-	        MouseAdapter mouseHandler;
+	        
 	        mouseHandler = new MouseAdapter() {
 	        	@Override
 	        	public void mouseClicked(MouseEvent e){
@@ -676,6 +678,10 @@ class MyBrickusListener implements BrickusListener {
 		}
 		else {
 			composite.tray.passButton.removeActionListener(composite.tray.buttonListener);
+			composite.board.removeMouseMotionListener(composite.board.mouseHandler);
+			composite.board.removeMouseListener(composite.board.mouseHandler);
+			composite.board.removeMouseListener(composite.board.myListener);
+			composite.board.removeMouseWheelListener(composite.board.myListener);
 			if(composite.model.calculateScore(Player.PLAYER1) > composite.model.calculateScore(Player.PLAYER2)) {
 				composite.updateErrorMessage("Game over. Player 1 won with " + composite.model.calculateScore(Player.PLAYER1) + " points.");
 			}

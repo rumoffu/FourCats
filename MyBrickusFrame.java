@@ -49,7 +49,7 @@ class Composite extends JComponent {
 	MyBrickusBoard board;
 	MyBrickusTray tray;
 	MyBrickusTracker tracker;
-	BrickusPiece activePiece;
+	SinglePiece activepiece;
 	BrickusModel model;
 	Color player1color;
 	Color player2color;
@@ -115,11 +115,15 @@ class Composite extends JComponent {
 	
 	public void pieceClicked(SinglePiece panel) {
 		
-		activePiece = panel.selected();
-		thepiece = new int[activePiece.getHeight()][activePiece.getWidth()];
-		for( int y = 0; y < activePiece.getHeight(); y++){
-			for(int x = 0; x < activePiece.getWidth(); x++){
-				if(activePiece.isOccupied(x, y))
+		if(activepiece != null) {
+			activepiece.unselected();
+		}
+		activepiece = panel;
+		activepiece.selected();
+		thepiece = new int[activepiece.mypiece.getHeight()][activepiece.mypiece.getWidth()];
+		for( int y = 0; y < activepiece.mypiece.getHeight(); y++){
+			for(int x = 0; x < activepiece.mypiece.getWidth(); x++){
+				if(activepiece.mypiece.isOccupied(x, y)) 
 				{
 					thepiece[y][x] = 1;
 				}
@@ -127,6 +131,7 @@ class Composite extends JComponent {
 		}
 		//I HAVE THE SELECTED PIECE
 		board.pieceSelected();
+		panel.repaint();
 	}
 	
 	public void updateScores(int score1, int score2) {
@@ -143,7 +148,7 @@ class Composite extends JComponent {
 	
 	public void rightClick(){
 		if(pieceSelected){
-			activePiece.flipHorizontally();
+			activepiece.mypiece.flipHorizontally();
 			updateThePiece();
 			repaint();
 		}
@@ -151,29 +156,29 @@ class Composite extends JComponent {
 
 	public void shiftRightClick(){
 		if(pieceSelected){
-			activePiece.flipVertically();
+			activepiece.mypiece.flipVertically();
 			updateThePiece();
 		}
 	}
 	
 	public void scrollUpWheel(){
 		if(pieceSelected){
-			activePiece.rotateCounterClockwise();
+			activepiece.mypiece.rotateCounterClockwise();
 			updateThePiece();
 		}
 	}
 	
 	public void scrollDownWheel(){
 		if(pieceSelected){
-			activePiece.rotateClockwise();
+			activepiece.mypiece.rotateClockwise();
 			updateThePiece();
 		}
 	}
 	public void updateThePiece() {
-		thepiece = new int[activePiece.getHeight()][activePiece.getWidth()];
-		for( int y = 0; y < activePiece.getHeight(); y++){
-			for(int x = 0; x < activePiece.getWidth(); x++){
-				if(activePiece.isOccupied(x, y))
+		thepiece = new int[activepiece.mypiece.getHeight()][activepiece.mypiece.getWidth()];
+		for( int y = 0; y < activepiece.mypiece.getHeight(); y++){
+			for(int x = 0; x < activepiece.mypiece.getWidth(); x++){
+				if(activepiece.mypiece.isOccupied(x, y))
 				{
 					thepiece[y][x] = 1;
 				}
@@ -259,7 +264,7 @@ class Composite extends JComponent {
 			else if(placingPlayer == Player.PLAYER2){
 				playerNum = 2;
 			}
-			model.placePiece(placingPlayer, coveredx, coveredy, activePiece);
+			model.placePiece(placingPlayer, coveredx, coveredy, activepiece.mypiece);
 			if(placingPlayer != model.getActivePlayer())
 			{ //successful placement so update model
 				for(int row = 0; row < thepiece.length; row++){
@@ -269,7 +274,7 @@ class Composite extends JComponent {
 						}
 					}
 				}
-				activePiece = null;
+				activepiece = null;
 				pieceSelected = false;
 			}
 		}
@@ -318,8 +323,8 @@ class Composite extends JComponent {
 			        		 }
 
 			        		 if(pieceSelected)
-			        		 for(int y = 0; y < activePiece.getHeight(); y++){
-			        			 for(int x = 0; x < activePiece.getWidth(); x++){
+			        		 for(int y = 0; y < activepiece.mypiece.getHeight(); y++){
+			        			 for(int x = 0; x < activepiece.mypiece.getWidth(); x++){
 			        				if(thepiece[y][x] == 1){
 			        					 if(col+x < model.getWidth() && row + y < model.getHeight()){
 			        						 g.setColor(shadow);
@@ -437,6 +442,7 @@ class Composite extends JComponent {
 		int heightBuffer;
 		int widthBuffer;
 		Color playerColor;
+		boolean highlight;
 		
 		public SinglePiece(BrickusModel model, BrickusPiece piece, MyMouseListener myListener) {
 			numRow = 5;
@@ -518,15 +524,30 @@ class Composite extends JComponent {
 		        	 ///System.out.println("col" + col);
 		        	 if(row < heightBuffer && col < widthBuffer)
 		        	 {
-		        		 g.setColor(Color.GRAY);
+		        		 if(highlight)
+		        		 {
+		        			 g.setColor(Color.YELLOW);
+		        		 }
+		        		 else
+		        		 {
+		        			 g.setColor(Color.GRAY);
+		        		 }
+		        			 
 		        	 }
 		        	 else if(mypiece.isOccupied(col-widthBuffer, row-heightBuffer))
 		        	 {
 		        		 g.setColor(playerColor);
 		        	 }
 		        	 else 
-		        	 {
-		        		 g.setColor(Color.GRAY);
+		        	 {		        		 
+		        		 if(highlight)
+		        		 {
+		        			 g.setColor(Color.YELLOW);
+		        		 }
+		        		 else
+		        		 {
+		        			 g.setColor(Color.GRAY);
+		        		 }
 		        	 }
 		        	 g.fillRect(col*cellWidth+col+xOffset,row*cellHeight+row+yOffset,cellWidth, cellHeight);
 		         }
@@ -559,8 +580,15 @@ class Composite extends JComponent {
 		public BrickusPiece selected(){
 			
 			//highlight myself
-			this.setBackground(Color.yellow);
+			highlight = true;
+			//this.setBackground(Color.yellow);
 			return mypiece;
+		}
+		
+		public void unselected(){
+			//unhightlight
+			highlight = false;
+			repaint();
 		}
 /*		public void paintComponent(Graphics g) {
 			;

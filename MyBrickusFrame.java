@@ -149,6 +149,7 @@ class Composite extends JComponent {
 		if(pieceSelected){
 			activepiece.mypiece.flipVertically();
 			updateThePiece();
+			repaint();
 		}
 	}
 	
@@ -156,6 +157,7 @@ class Composite extends JComponent {
 		if(pieceSelected){
 			activepiece.mypiece.rotateCounterClockwise();
 			updateThePiece();
+			repaint();
 		}
 	}
 	
@@ -163,6 +165,7 @@ class Composite extends JComponent {
 		if(pieceSelected){
 			activepiece.mypiece.rotateClockwise();
 			updateThePiece();
+			repaint();
 		}
 	}
 	public void updateThePiece() {
@@ -412,6 +415,11 @@ class Composite extends JComponent {
 			this.repaint();
 			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
 				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
+				if(activepiece.mypiece == piece)
+				{
+					activepiece = newPiece;
+					newPiece.selected();
+				}
 				this.add(newPiece);
 				count++;
 			}
@@ -437,8 +445,8 @@ class Composite extends JComponent {
 			this.setBackground(Color.white);
 			this.addMouseListener(myListener);
 			this.addMouseWheelListener(myListener);
-			int heightBuffer = calculateBuffer(piece.getHeight());
-			int widthBuffer = calculateBuffer(piece.getWidth());
+			int heightBuffer = calculateBuffer(mypiece.getHeight());
+			int widthBuffer = calculateBuffer(mypiece.getWidth());
 			
 			Player activePlayer = model.getActivePlayer();
 			Color playerColor;
@@ -599,6 +607,7 @@ class MyBrickusListener implements BrickusListener {
 		if(!event.isGameOver()) {
 			composite.updateScores(composite.model.calculateScore(Player.PLAYER1), composite.model.calculateScore(Player.PLAYER2));
 			composite.updateSinglePiece(composite.model);
+
 		}
 		else {
 			composite.tray.passButton.removeActionListener(composite.tray.buttonListener);

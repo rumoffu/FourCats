@@ -453,9 +453,10 @@ class Composite extends JComponent {
 			mypiece = piece;
 			//this.setLayout(new GridLayout(5, 5));
 			this.setBackground(Color.white);
+			if(piece == null) return;
 			this.addMouseListener(myListener);
 			this.addMouseWheelListener(myListener);
-			if(piece == null) return;
+
 			//int heightBuffer = calculateBuffer(piece.getHeight());
 			//int widthBuffer = calculateBuffer(piece.getWidth());
 			heightBuffer = (numRow-mypiece.getHeight()) / 2;

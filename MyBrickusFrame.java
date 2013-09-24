@@ -520,7 +520,7 @@ class Composite extends JComponent {
 		        	 {
 		        		 g.setColor(Color.GRAY);
 		        	 }
-		        	 else if(mypiece.isOccupied(col-heightBuffer, row-widthBuffer))
+		        	 else if(mypiece.isOccupied(col-widthBuffer, row-heightBuffer))
 		        	 {
 		        		 g.setColor(playerColor);
 		        	 }

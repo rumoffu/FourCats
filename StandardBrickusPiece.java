@@ -16,8 +16,8 @@ import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusPiece;
  * y is the row number, and x is the column number
  */
 public class StandardBrickusPiece implements BrickusPiece {
-
-	public int[][] grid;
+	private StandardBrickusModel mymodel;
+	private int[][] grid;
 	private int height;
 	private int width;
 	
@@ -25,7 +25,8 @@ public class StandardBrickusPiece implements BrickusPiece {
 	 * Constructor to create a Brickus piece
 	 * @param piece a 2d integer array specifying the brick locations as 1's, else 0
 	 */
-	public StandardBrickusPiece(int[][] piece) {
+	public StandardBrickusPiece(StandardBrickusModel model, int[][] piece) {
+		mymodel = model;
 		height = piece.length;
 		width = piece[0].length;
 		grid = new int[height][width];
@@ -47,8 +48,8 @@ public class StandardBrickusPiece implements BrickusPiece {
 				tempGrid[y][width - 1 - x] = grid[y][x];
 			}
 		grid = tempGrid;
-		BrickusEvent update = new BrickusEvent(StandardBrickusModel.myModel, false, false); //game ended is false
-		for(BrickusListener listener: StandardBrickusModel.myModel.listeners){
+		BrickusEvent update = new BrickusEvent(mymodel, false, false); //game ended is false
+		for(BrickusListener listener: mymodel.listeners){
 			listener.modelChanged(update);
 		}	
 	}
@@ -64,8 +65,8 @@ public class StandardBrickusPiece implements BrickusPiece {
 				tempGrid[height - 1 - y][x] = grid[y][x];
 			}
 		grid = tempGrid;
-		BrickusEvent update = new BrickusEvent(StandardBrickusModel.myModel, false, false); //game ended is false
-		for(BrickusListener listener: StandardBrickusModel.myModel.listeners){
+		BrickusEvent update = new BrickusEvent(mymodel, false, false); //game ended is false
+		for(BrickusListener listener: mymodel.listeners){
 			listener.modelChanged(update);
 		}	
 	}
@@ -111,8 +112,8 @@ public class StandardBrickusPiece implements BrickusPiece {
 		height = width;
 		width = temp; 
 		grid = tempGrid;
-		BrickusEvent update = new BrickusEvent(StandardBrickusModel.myModel, false, false); //game ended is false
-		for(BrickusListener listener: StandardBrickusModel.myModel.listeners){
+		BrickusEvent update = new BrickusEvent(mymodel, false, false); //game ended is false
+		for(BrickusListener listener: mymodel.listeners){
 			listener.modelChanged(update);
 		}	
 	}
@@ -132,8 +133,8 @@ public class StandardBrickusPiece implements BrickusPiece {
 		height = width;
 		width = temp; 
 		grid = tempGrid;
-		BrickusEvent update = new BrickusEvent(StandardBrickusModel.myModel, false, false); //game ended is false
-		for(BrickusListener listener: StandardBrickusModel.myModel.listeners){
+		BrickusEvent update = new BrickusEvent(mymodel, false, false); //game ended is false
+		for(BrickusListener listener: mymodel.listeners){
 			listener.modelChanged(update);
 		}	
 	}

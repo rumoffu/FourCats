@@ -52,8 +52,8 @@ class FullComponent extends JComponent {
 	 * @param fram The JFrame which is holding the FullComponent (this is for creating a new game / resetting).
 	 */
 	public FullComponent(BrickusModel model, MyBrickusFrame fram) {
-		player1color = new Color(0,0,240);
-		player2color = new Color(240,0,0);
+		player1color = new Color(0,0,240); //blue
+		player2color = new Color(240,0,0); //red
 		player1colorhalf = new Color(0,0,240,120);
 		player2colorhalf = new Color(240,0,0,120);
 		

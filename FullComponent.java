@@ -33,7 +33,7 @@ import edu.jhu.cs.oose.fall2013.brickus.iface.Player;
 @SuppressWarnings("serial")
 class FullComponent extends JComponent {
 	
-	BrickusModel model;
+	BrickusModel mymodel;
 	MyBrickusBoard board;
 	MyBrickusTray tray;
 	MyBrickusTracker tracker;
@@ -57,7 +57,7 @@ class FullComponent extends JComponent {
 		player1colorhalf = new Color(0,0,240,120);
 		player2colorhalf = new Color(240,0,0,120);
 		
-		this.model = model;
+		this.mymodel = model;
 		this.framer = fram;
 		this.setLayout(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
@@ -66,8 +66,8 @@ class FullComponent extends JComponent {
 		MyMouseListener myListener = new MyMouseListener(this);
 		
 		modelListener = new MyBrickusListener(this);
-		model.addBrickusListener(modelListener);
-		board = new MyBrickusBoard(model, myListener);
+		mymodel.addBrickusListener(modelListener);
+		board = new MyBrickusBoard(myListener);
 		board.setBorder(BorderFactory.createLineBorder(Color.black));
 		constraints.gridx = 0;
 		constraints.gridy = 0;
@@ -78,7 +78,7 @@ class FullComponent extends JComponent {
 		constraints.weighty = 1;
 		this.add(board, constraints);
 
-		tray = new MyBrickusTray(model, myListener); // lower panel of pieces and pass button
+		tray = new MyBrickusTray(myListener); // lower panel of pieces and pass button
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		constraints.gridwidth = 1;
@@ -88,7 +88,7 @@ class FullComponent extends JComponent {
 		constraints.weighty = 0;
 		this.add(tray, constraints);
 
-		tracker = new MyBrickusTracker(model); // error board, score boards
+		tracker = new MyBrickusTracker(); // error board, score boards
 		constraints.gridx = 0;
 		constraints.gridy = 2;
 		constraints.gridwidth = 1;
@@ -127,23 +127,37 @@ class FullComponent extends JComponent {
 	
 	/**
 	 * Function to update the total score count for player 1 and player 2.
-	 * @param score1 The score of player 1.
-	 * @param score2 The score of player 2.
 	 */
-	public void updateScores(int score1, int score2) {
+	public void updateScores() {
 		
-		tracker.newScores(score1, score2);
+		tracker.newScores(calculateScore(Player.PLAYER1), calculateScore(Player.PLAYER2));
+	}
+	
+	/**
+	 * Calculates the score of the player
+	 * @param player The player whose score to return
+	 * @return player's current score
+	 */
+	public int calculateScore(Player player){
+		return mymodel.calculateScore(player);
 	}
 	
 	/**
 	 * Method to update the display of each of the Brickus pieces.
 	 * @param model The BrickusModel that is updating the piece list.
 	 */
-	public void updateSinglePiece(BrickusModel model) {
+	public void updateSinglePiece() {
 		
-		tray.updateSinglePiece(model);
+		tray.updateSinglePiece();
 		board.repaint();
 		tray.revalidate();
+	}
+	
+	/**
+	 * Method to handle the end of the game to remove listeners.
+	 */
+	public void endGame(){
+		tray.gameover();
 	}
 	
 	/**
@@ -204,13 +218,12 @@ class FullComponent extends JComponent {
 		
 		/**
 		 * Constructor to create a Brickus Board.
-		 * @param model The BrickusModel managing the board logic.
 		 * @param myListener The mouse listener which will track user inputs from the mouse.
 		 */
-		public MyBrickusBoard(BrickusModel model, MyMouseListener myListener) {
+		public MyBrickusBoard(MyMouseListener myListener) {
 			pieceSelected = false;
-			numCol = model.getWidth();
-			numRow = model.getHeight();
+			numCol = mymodel.getWidth();
+			numRow = mymodel.getHeight();
 			this.myListener = myListener;
 			mygrid = new int[numRow][numCol];
 			for(int y = 0; y < numRow; y++)
@@ -280,7 +293,7 @@ class FullComponent extends JComponent {
 		 * Function to attempt to place a piece on the Brickus board.
 		 */
 		public void placePiece(){
-			Player placingPlayer = model.getActivePlayer();
+			Player placingPlayer = mymodel.getActivePlayer();
 			int playerNum = 0;
 			if(placingPlayer == Player.PLAYER1){
 				playerNum = 1;
@@ -291,8 +304,8 @@ class FullComponent extends JComponent {
 			if(activepiece != null){
 				
 			
-				model.placePiece(placingPlayer, coveredx, coveredy, activepiece.mypiece);
-				if(placingPlayer != model.getActivePlayer())
+				mymodel.placePiece(placingPlayer, coveredx, coveredy, activepiece.mypiece);
+				if(placingPlayer != mymodel.getActivePlayer())
 				{ //successful placement so update model
 					for(int row = 0; row < activepiece.mypiece.getHeight(); row++){
 						for(int col = 0; col < activepiece.mypiece.getWidth(); col++){
@@ -347,10 +360,10 @@ class FullComponent extends JComponent {
 			         for (int col = 0; col < numCol; col++) {
 			        	 if(row == coveredy && col == coveredx )
 			        	 {
-			        		 if(model.getActivePlayer() == Player.PLAYER1){
+			        		 if(mymodel.getActivePlayer() == Player.PLAYER1){
 			        			 shadow = player1colorhalf;
 			        		 }
-			        		 else if(model.getActivePlayer() == Player.PLAYER2){
+			        		 else if(mymodel.getActivePlayer() == Player.PLAYER2){
 			        			 shadow = player2colorhalf;
 			        		 }
 
@@ -358,7 +371,7 @@ class FullComponent extends JComponent {
 			        		 for(int y = 0; y < activepiece.mypiece.getHeight(); y++){
 			        			 for(int x = 0; x < activepiece.mypiece.getWidth(); x++){
 			        				if(activepiece.mypiece.isOccupied(x,y)){
-			        					 if(col+x < model.getWidth() && row + y < model.getHeight()){
+			        					 if(col+x < mymodel.getWidth() && row + y < mymodel.getHeight()){
 			        						 g.setColor(shadow);
 			        						 g.fillRect((col+x)*cellWidth+(col+x)+xOffset,(row+y)*cellHeight+(row+y)+yOffset,cellWidth, cellHeight);
 			        						 
@@ -389,10 +402,9 @@ class FullComponent extends JComponent {
 		
 		/**
 		 * Constructor to create a tray for holding the pieces and the pass button.
-		 * @param model The BrickusModel controlling the logic.
 		 * @param myListener The mouse listener which listens for mouse input from the user.
 		 */
-		public MyBrickusTray(BrickusModel model, MyMouseListener myListener) {
+		public MyBrickusTray(MyMouseListener myListener) {
 			
 			this.myListener = myListener;
 			GridBagLayout my = new GridBagLayout();
@@ -400,7 +412,7 @@ class FullComponent extends JComponent {
 			this.setBorder(BorderFactory.createLineBorder(Color.black));		
 			GridBagConstraints constraints = new GridBagConstraints();
 			
-			pieceTray pieceTray = new pieceTray(model, myListener);
+			pieceTray pieceTray = new pieceTray(myListener);
 			pieceTray.setBorder(BorderFactory.createLineBorder(Color.black));
 			constraints.fill = GridBagConstraints.BOTH;
 			constraints.gridx = 0;
@@ -415,7 +427,7 @@ class FullComponent extends JComponent {
 			this.tray = pieceTray;
 			
 			passButton = new JButton("Pass");
-			MyButtonListener buttonListener = new MyButtonListener(model, this);
+			MyButtonListener buttonListener = new MyButtonListener(mymodel, this);
 			passButton.addActionListener(buttonListener);
 			this.buttonListener = buttonListener;
 			constraints.fill = GridBagConstraints.VERTICAL;
@@ -432,11 +444,10 @@ class FullComponent extends JComponent {
 		
 		/**
 		 * Function for updating a single piece.
-		 * @param model The BrickusModel which has updated the piece.
 		 */
-		public void updateSinglePiece(BrickusModel model) {
+		public void updateSinglePiece() {
 			
-			this.tray.updateSinglePiece(model, myListener);
+			this.tray.updateSinglePiece(myListener);
 		}
 		
 		/**
@@ -445,7 +456,7 @@ class FullComponent extends JComponent {
 		public void gameover(){
 			gameover = true;
 			passButton.setText("New Game");
-			model.removeBrickusListener(modelListener);
+			mymodel.removeBrickusListener(modelListener);
 			board.removeMouseMotionListener(board.mouseHandler);
 			board.removeMouseListener(board.mouseHandler);
 			board.removeMouseListener(board.myListener);
@@ -471,39 +482,37 @@ class FullComponent extends JComponent {
 		
 		/**
 		 * Constructor to create the tray for holding the pieces
-		 * @param model The BrickusModel supplying the Brickus pieces.
 		 * @param myListener The mouse listener that will listen for all mouse input.
 		 */
-		public pieceTray(BrickusModel model, MyMouseListener myListener) {
+		public pieceTray(MyMouseListener myListener) {
 			
 			this.myListener = myListener;
 			this.setLayout(new GridLayout(3, 7));
 			this.setBorder(BorderFactory.createLineBorder(Color.black));
 			
-			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
+			for(BrickusPiece piece: mymodel.getPieces(mymodel.getActivePlayer())) {
 				
-				SinglePiece newPiece = new SinglePiece(model, piece, myListener);
+				SinglePiece newPiece = new SinglePiece(piece, myListener);
 				this.add(newPiece);
 			}
 		}
 		
 		/**
 		 * Function to update the display of a single piece after the Brickus model changes. 
-		 * @param model The BrickusModel causing the update.
 		 * @param myListener The mouse listener to be added for each piece.
 		 */
-		public void updateSinglePiece(BrickusModel model, MyMouseListener myListener) {
+		public void updateSinglePiece(MyMouseListener myListener) {
 			int count = 0;
 			this.removeAll();
 			this.repaint();
-			for(BrickusPiece piece: model.getPieces(model.getActivePlayer())) {
-				SinglePiece newPiece = new SinglePiece(model, piece, myListener); 
+			for(BrickusPiece piece: mymodel.getPieces(mymodel.getActivePlayer())) {
+				SinglePiece newPiece = new SinglePiece(piece, myListener); 
 				this.add(newPiece);
 				count++;
 			}
 			while(count < 21){
 				BrickusPiece temp = null;
-				SinglePiece newPiece = new SinglePiece(model, temp, myListener); 
+				SinglePiece newPiece = new SinglePiece(temp, myListener); 
 				this.add(newPiece);
 				count++;
 			}
@@ -528,11 +537,10 @@ class FullComponent extends JComponent {
 		
 		/**
 		 * Constructor for a single Brickus piece representation 
-		 * @param model The BrickusModel which controls the piece
 		 * @param piece The Brickus piece to be displayed
 		 * @param myListener The custom mouse listener for tracking mouse input.
 		 */
-		public SinglePiece(BrickusModel model, BrickusPiece piece, MyMouseListener myListener) {
+		public SinglePiece(BrickusPiece piece, MyMouseListener myListener) {
 			numRow = 5;
 			numCol = 5;
 			mypiece = piece;
@@ -544,7 +552,7 @@ class FullComponent extends JComponent {
 			heightBuffer = (numRow-mypiece.getHeight()) / 2;
 			widthBuffer = (numCol-mypiece.getWidth()) / 2;
 			
-			Player activePlayer = model.getActivePlayer();
+			Player activePlayer = mymodel.getActivePlayer();
 			if(activePlayer == Player.PLAYER1) {
 				playerColor = player1color;
 			}
@@ -640,9 +648,8 @@ class FullComponent extends JComponent {
 		
 		/**
 		 * Constructor for creating the message tracker.
-		 * @param model The BrickusModel supplying the error messages.
 		 */
-		public MyBrickusTracker(BrickusModel model) {
+		public MyBrickusTracker() {
 			
 			this.setLayout(new GridBagLayout());
 			this.setBorder(BorderFactory.createLineBorder(Color.black));

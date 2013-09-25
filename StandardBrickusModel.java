@@ -20,26 +20,26 @@ import kyle.brickus.StandardBrickusPiece;
  */
 public class StandardBrickusModel implements BrickusModel {
 
-	public static StandardBrickusModel myModel = new StandardBrickusModel();
-	public int numPlayers = 4;
-	private int boardWidth = 20;
-	private int boardHeight = 20;
+	protected int numPlayers = 2;
+	private int boardWidth = 14;
+	private int boardHeight = 14;
 	int activePlayer = 1; //PLAYER1 starts
 	private int[][] board = new int[boardHeight][boardWidth];
 	private java.util.List<BrickusPiece> player1pieces = new java.util.ArrayList<BrickusPiece>();
 	private java.util.List<BrickusPiece> player2pieces= new java.util.ArrayList<BrickusPiece>();
-	private java.util.List<BrickusPiece> player3pieces= new java.util.ArrayList<BrickusPiece>();
+	/*private java.util.List<BrickusPiece> player3pieces= new java.util.ArrayList<BrickusPiece>();
 	private java.util.List<BrickusPiece> player4pieces= new java.util.ArrayList<BrickusPiece>();
+	*/
 	private List<List<BrickusPiece>> playerpieces = new ArrayList<List<BrickusPiece>>(numPlayers);
-	public java.util.List<BrickusListener> listeners = new java.util.ArrayList<BrickusListener>();
+	protected java.util.List<BrickusListener> listeners = new java.util.ArrayList<BrickusListener>();
 	
 	private int numPasses = 0;
 	
 	private java.util.List<Player> players = new java.util.ArrayList<Player>();
 	Player PLAYER1 = Player.PLAYER1;
 	Player PLAYER2 = Player.PLAYER2;
-	Player PLAYER3 = Player.PLAYER3;
-	Player PLAYER4 = Player.PLAYER4;
+	//Player PLAYER3 = Player.PLAYER3;
+	//Player PLAYER4 = Player.PLAYER4;
 
 	/**
 	 * Constructor to initialize 21 Brickus pieces for each of the 2 players
@@ -49,13 +49,13 @@ public class StandardBrickusModel implements BrickusModel {
 		initializeBoard();
 		players.add(PLAYER1);
 		players.add(PLAYER2);
-		players.add(PLAYER3);
-		players.add(PLAYER4);
+		//players.add(PLAYER3);
+		//players.add(PLAYER4);
 		
 		playerpieces.add(player1pieces);
 		playerpieces.add(player2pieces);
-		playerpieces.add(player3pieces);
-		playerpieces.add(player4pieces);
+		//playerpieces.add(player3pieces);
+		//playerpieces.add(player4pieces);
 		for(List<BrickusPiece> set : playerpieces)
 		{
 			constructPieces(set);
@@ -87,111 +87,111 @@ public class StandardBrickusModel implements BrickusModel {
 		piece[0] = new int[] {0,1,0};
 		piece[1] = new int[] {1,1,1};
 		piece[2] = new int[] {0,1,0};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[3][3];
 		piece[0] = new int[] {1,0,0};
 		piece[1] = new int[] {1,1,1};
 		piece[2] = new int[] {0,1,0};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[3][3];
 		piece[0] = new int[] {1,1,1};
 		piece[1] = new int[] {0,1,0};
 		piece[2] = new int[] {0,1,0};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[2][4];
 		piece[0] = new int[] {1,1,1,1};
 		piece[1] = new int[] {0,0,0,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[1][5];
 		piece[0] = new int[] {1,1,1,1,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[3][3];
 		piece[0] = new int[] {1,1,0};
 		piece[1] = new int[] {0,1,0};
 		piece[2] = new int[] {0,1,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[3][2];
 		piece[0] = new int[] {1,1};
 		piece[1] = new int[] {0,1};
 		piece[2] = new int[] {1,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		//row2 pieces
 		piece = new int[3][2];
 		piece[0] = new int[] {1,1};
 		piece[1] = new int[] {1,1};
 		piece[2] = new int[] {0,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[3][3];
 		piece[0] = new int[] {1,0,0};
 		piece[1] = new int[] {1,1,0};
 		piece[2] = new int[] {0,1,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[2][4];
 		piece[0] = new int[] {1,1,0,0};
 		piece[1] = new int[] {0,1,1,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[2][4];
 		piece[0] = new int[] {1,1,1,1};
 		piece[1] = new int[] {0,1,0,0};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[3][3];
 		piece[0] = new int[] {1,1,1};
 		piece[1] = new int[] {0,0,1};
 		piece[2] = new int[] {0,0,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[1][4];
 		piece[0] = new int[] {1,1,1,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[2][3];
 		piece[0] = new int[] {1,1,1};
 		piece[1] = new int[] {0,0,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		//row 3 pieces
 		piece = new int[2][3];
 		piece[0] = new int[] {1,1,1};
 		piece[1] = new int[] {0,1,0};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[2][3];
 		piece[0] = new int[] {1,1,0};
 		piece[1] = new int[] {0,1,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[2][2];
 		piece[0] = new int[] {1,1};
 		piece[1] = new int[] {1,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[1][3];
 		piece[0] = new int[] {1,1,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[2][2];
 		piece[0] = new int[] {1,1};
 		piece[1] = new int[] {0,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[1][2];
 		piece[0] = new int[] {1,1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 		
 		piece = new int[1][1];
 		piece[0] = new int[] {1};
-		set.add(new StandardBrickusPiece(piece));
+		set.add(new StandardBrickusPiece(this, piece));
 	}
 	
 	/** 
@@ -199,7 +199,7 @@ public class StandardBrickusModel implements BrickusModel {
 	 * @param listener a BrickusListener that listens for events
 	 */
 	public void addBrickusListener(BrickusListener listener){
-		StandardBrickusModel.myModel.listeners.add(listener);
+		listeners.add(listener);
 	}
 	
 	/** 
@@ -215,9 +215,11 @@ public class StandardBrickusModel implements BrickusModel {
 		{
 			for(int x = 0; x < boardWidth; x++)
 			{
+				//System.out.print(board[y][x] + " ");
 				if(board[y][x] == playerNum)
 					score++;
 			}
+			//System.out.println("");
 		}
 		return score;
 	}
@@ -232,10 +234,10 @@ public class StandardBrickusModel implements BrickusModel {
 			player = PLAYER1;
 		else if (activePlayer == 2)
 			player = PLAYER2;
-		else if (activePlayer == 3)
+		/*else if (activePlayer == 3)
 			player = PLAYER3;
 		else if (activePlayer == 4)
-			player = PLAYER4;
+			player = PLAYER4;*/
 		else
 		{
 			player = null;
@@ -256,10 +258,10 @@ public class StandardBrickusModel implements BrickusModel {
 			player = PLAYER1;
 		else if(board[y][x] == 2)
 			player = PLAYER2;
-		else if(board[y][x] == 3)
+		/*else if(board[y][x] == 3)
 			player = PLAYER3;
 		else if(board[y][x] == 4)
-			player = PLAYER4;
+			player = PLAYER4;*/
 		else //unoccupied
 			player = null;
 		return player;
@@ -284,10 +286,10 @@ public class StandardBrickusModel implements BrickusModel {
 			theList = player1pieces;
 		else if(player == PLAYER2)
 			theList = player2pieces;
-		else if(player == PLAYER3)
+		/*else if(player == PLAYER3)
 			theList = player3pieces;
 		else if(player == PLAYER4)
-			theList = player4pieces;
+			theList = player4pieces;*/
 		else
 		{
 			theList = null;
@@ -317,12 +319,12 @@ public class StandardBrickusModel implements BrickusModel {
 		}
 		numPasses++;
 		if(numPasses == numPlayers){
-			update = new BrickusEvent(StandardBrickusModel.myModel, true, true); //game ended is true
+			update = new BrickusEvent(this, true, true); //game ended is true
 		}
 		else{
-			update = new BrickusEvent(StandardBrickusModel.myModel, true, false); //game ended is false
+			update = new BrickusEvent(this, true, false); //game ended is false
 		}
-		for(BrickusListener listener: StandardBrickusModel.myModel.listeners){
+		for(BrickusListener listener: listeners){
 			listener.modelChanged(update);
 		}
 	}
@@ -337,10 +339,11 @@ public class StandardBrickusModel implements BrickusModel {
 			return 1;
 		else if(player == PLAYER2)
 			return 2;
-		else if(player == PLAYER3)
+		/*else if(player == PLAYER3)
 			return 3;
 		else if(player == PLAYER4)
 			return 4;
+			*/
 		else
 			return 0;
 	}
@@ -354,13 +357,12 @@ public class StandardBrickusModel implements BrickusModel {
 	 */
 	public void placePiece(Player player, int x, int y, BrickusPiece piece) {
 
+		
 		boolean validDiagonal = false;
 		boolean validStart = false;
 		boolean playerChanged = false;
 		boolean topFilled = false;
 		boolean botFilled = false;
-		boolean topDiagonal = false;
-		boolean botDiagonal = false;
 		String testMessage;
 		
 		//find player number
@@ -381,12 +383,24 @@ public class StandardBrickusModel implements BrickusModel {
 					{	//only count if occupies a square
 						if(piece.isOccupied(px, py)) 
 						{	//fits within board
-							if(0 <= px+x-1 && px+x+1 < boardWidth && 0 <= py+y-1 && py+y+1 < boardHeight )
+							if(px+x+1 < boardWidth)
 							{
-								topDiagonal = board[py+y+1][px+x-1] == playerNum || board[py+y+1][px+x+1] == playerNum;
-								botDiagonal = board[py+y-1][px+x+1] == playerNum || board[py+y-1][px+x-1] == playerNum;
-								if(topDiagonal || botDiagonal )
-									validDiagonal = true;
+								if(py+y+1 < boardHeight)
+									if(board[py+y+1][px+x+1] == playerNum)
+										validDiagonal = true;
+								if(py+y-1 >= 0)
+									if(board[py+y-1][px+x+1] == playerNum)
+										validDiagonal = true;
+							}
+						
+							if(px+x-1 >= 0)
+							{
+								if(py+y+1 < boardHeight)
+									if(board[py+y+1][px+x-1] == playerNum)
+										validDiagonal = true;
+								if(py+y-1 >= 0)
+									if(board[py+y-1][px+x-1] == playerNum)
+										validDiagonal = true;
 							}
 						}
 					}
@@ -433,15 +447,15 @@ public class StandardBrickusModel implements BrickusModel {
 			}
 			
 			numPasses = 0; //player did not pass consecutively
-			BrickusEvent update = new BrickusEvent(myModel, playerChanged, false); //game ended is false
-			for(BrickusListener listener: myModel.listeners){
+			BrickusEvent update = new BrickusEvent(this, playerChanged, false); //game ended is false
+			for(BrickusListener listener: listeners){
 				listener.modelChanged(update);
 			}	
 		}
 		else //not valid so send the error message
 		{
 			BrickusIllegalMoveEvent illegalEvent = new BrickusIllegalMoveEvent(testMessage);
-			for(BrickusListener listener: myModel.listeners){
+			for(BrickusListener listener: listeners){
 				listener.illegalMove(illegalEvent);
 			}	
 		}
@@ -452,7 +466,7 @@ public class StandardBrickusModel implements BrickusModel {
 	 * @param listener the BrickusListener to remove
 	 */
 	public void removeBrickusListener(BrickusListener listener) {
-		myModel.listeners.remove(listener);
+		listeners.remove(listener);
 	}
 	
 		

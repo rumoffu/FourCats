@@ -288,13 +288,15 @@ class FullComponent extends JComponent {
 			else if(placingPlayer == Player.PLAYER2){
 				playerNum = 2;
 			}
-			model.placePiece(placingPlayer, coveredx, coveredy, activepiece.mypiece);
-			if(placingPlayer != model.getActivePlayer())
-			{ //successful placement so update model
-				for(int row = 0; row < activepiece.mypiece.getHeight(); row++){
-					for(int col = 0; col < activepiece.mypiece.getWidth(); col++){
-						if(activepiece.mypiece.isOccupied(col, row)){
-							mygrid[coveredy+row][coveredx+col] = playerNum; 		
+			if(activepiece != null){
+				model.placePiece(placingPlayer, coveredx, coveredy, activepiece.mypiece);
+				if(placingPlayer != model.getActivePlayer())
+				{ //successful placement so update model
+					for(int row = 0; row < activepiece.mypiece.getHeight(); row++){
+						for(int col = 0; col < activepiece.mypiece.getWidth(); col++){
+							if(activepiece.mypiece.isOccupied(col, row)){
+								mygrid[coveredy+row][coveredx+col] = playerNum; 		
+							}	
 						}
 					}
 				}

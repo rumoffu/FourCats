@@ -289,6 +289,8 @@ class FullComponent extends JComponent {
 				playerNum = 2;
 			}
 			if(activepiece != null){
+				
+			
 				model.placePiece(placingPlayer, coveredx, coveredy, activepiece.mypiece);
 				if(placingPlayer != model.getActivePlayer())
 				{ //successful placement so update model
@@ -296,12 +298,12 @@ class FullComponent extends JComponent {
 						for(int col = 0; col < activepiece.mypiece.getWidth(); col++){
 							if(activepiece.mypiece.isOccupied(col, row)){
 								mygrid[coveredy+row][coveredx+col] = playerNum; 		
-							}	
+							}
 						}
 					}
+					activepiece = null;
+					pieceSelected = false;
 				}
-				activepiece = null;
-				pieceSelected = false;
 			}
 		}
 		

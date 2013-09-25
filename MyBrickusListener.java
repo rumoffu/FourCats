@@ -1,47 +1,62 @@
-package edu.jhu.cs.tyung1.oose;
-
+package kwong23.brickusui;
+/**
+ * Kyle Wong
+ * 13.9.25
+ * kwong23@jhu.edu
+ */
+import kwong23.brickusui.FullComponent;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusEvent;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusIllegalMoveEvent;
 import edu.jhu.cs.oose.fall2013.brickus.iface.BrickusListener;
 import edu.jhu.cs.oose.fall2013.brickus.iface.Player;
 
+/**
+ * Custom listener class to respond to Brickus Model events.
+ * @author KT Wong
+ *
+ */
 class MyBrickusListener implements BrickusListener {
 
-	public Composite composite;
+	public FullComponent full;
 	
-	public MyBrickusListener(Composite composite) {
+	/**
+	 * Constructor to create the listener and store its caller which is a FullComponent.
+	 * @param fullComponent The FullComponent that is adding the listener.
+	 */
+	public MyBrickusListener(FullComponent fullComponent) {
 		
-		this.composite = composite;
+		this.full = fullComponent;
 	}
 	
+	/**
+	 * Function to detect illegal moves and respond to them by displaying the image in the User interface.
+	 */
 	public void illegalMove(BrickusIllegalMoveEvent event) {
 	
-		composite.updateErrorMessage(event.getMessage());
+		full.updateErrorMessage(event.getMessage());
 	}
 
+	/**
+	 * Function to update the User interface when the model changes.
+	 */
 	public void modelChanged(BrickusEvent event) {
 		
 		if(!event.isGameOver()) {
 			if(event.isPlayerChanged()){
-				composite.updateScores(composite.model.calculateScore(Player.PLAYER1), composite.model.calculateScore(Player.PLAYER2));
-				composite.updateSinglePiece(composite.model);
+				full.updateScores(full.model.calculateScore(Player.PLAYER1), full.model.calculateScore(Player.PLAYER2));
+				full.updateSinglePiece(full.model);
 			}
 		}
 		else {
-			composite.tray.gameover();
-			//composite.tray.passButton.removeActionListener(composite.tray.buttonListener);
-			composite.board.removeMouseMotionListener(composite.board.mouseHandler);
-			composite.board.removeMouseListener(composite.board.mouseHandler);
-			composite.board.removeMouseListener(composite.board.myListener);
-			composite.board.removeMouseWheelListener(composite.board.myListener);
-			if(composite.model.calculateScore(Player.PLAYER1) > composite.model.calculateScore(Player.PLAYER2)) {
-				composite.updateErrorMessage("Game over. Player 1 won with " + composite.model.calculateScore(Player.PLAYER1) + " points.");
+			full.tray.gameover();
+			if(full.model.calculateScore(Player.PLAYER1) > full.model.calculateScore(Player.PLAYER2)) {
+				full.updateErrorMessage("Game over. Player 1 won with " + full.model.calculateScore(Player.PLAYER1) + " points.");
 			}
-			else if(composite.model.calculateScore(Player.PLAYER1) < composite.model.calculateScore(Player.PLAYER2)) {
-				composite.updateErrorMessage("Game over. Player 2 won with " + composite.model.calculateScore(Player.PLAYER2) + " points.");
+			else if(full.model.calculateScore(Player.PLAYER1) < full.model.calculateScore(Player.PLAYER2)) {
+				full.updateErrorMessage("Game over. Player 2 won with " + full.model.calculateScore(Player.PLAYER2) + " points.");
 			}
 			else {
-				composite.updateErrorMessage("Game over. Players tied.");
+				full.updateErrorMessage("Game over. Players tied.");
 			}
 		}
 	}
